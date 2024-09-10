@@ -1,5 +1,5 @@
 const APP_ID = "d7055ebabe4b4bf08032f06c5fe966e0"
-const TOKEN = "007eJxTYHC72xTpIdBgrKLkEfAq+NQBxs/Xm6/HvuVct/WQwpnW+VsVGFLMDUxNU5MSk1JNkkyS0gwsDIyN0gzMkk3TUi3NzFINjiy8l9YQyMiwT/MBIyMDBIL4bAyZxRmZ2YkMDADMJSIF"
+const TOKEN = "007eJxTYOjdOv/SPnbNs0785+9NdV2csrTjkOYEwd0fpWM/TZ/kvfaLAkOKuYGpaWpSYlKqSZJJUpqBhYGxUZqBWbJpWqqlmVmqQXr3g7SGQEaGD6XRzIwMEAjiszFkFmdkZicyMAAAMnQisA=="
 const CHANNEL = "ishika"
 
 const client = AgoraRTC.createClient({mode:'rtc', codec:'vp8'})

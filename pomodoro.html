@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer with Program Tiles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            text-align: center;
+            background-color: #16213e;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #00b4d8;
+        }
+        #timer {
+            font-size: 4rem;
+            margin: 1rem 0;
+        }
+        button {
+            background-color: #00b4d8;
+            color: #1a1a2e;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0096c7;
+        }
+        input {
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            border: 1px solid #00b4d8;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin: 0.5rem;
+            width: calc(33.33% - 1rem);
+        }
+        #sessionInfo {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+        }
+        .program-tiles {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .program-tile {
+            background-color: #0077be;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            flex: 1 0 calc(50% - 10px);
+            max-width: calc(50% - 10px);
+            box-sizing: border-box;
+        }
+        .program-tile:hover, .program-tile.active {
+            background-color: #005a8e;
+        }
+        #customProgramInputs {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pomodoro Timer</h1>
+        <div id="timer">25:00</div>
+        <div id="sessionInfo">Focus Session 1/5</div>
+        
+        <div class="program-tiles">
+            <div class="program-tile" onclick="selectProgram('5-25-5')">5 x (25 min focus + 5 min break)</div>
+            <div class="program-tile" onclick="selectProgram('3-60-10')">3 x (60 min focus + 10 min break)</div>
+            <div class="program-tile" onclick="selectProgram('2-120-15')">2 x (120 min focus + 15 min break)</div>
+            <div class="program-tile" onclick="toggleCustomInputs()">Create Custom Program</div>
+        </div>
+        
+        <div id="customProgramInputs">
+            <input type="number" id="customSessions" placeholder="Number of sessions">
+            <input type="number" id="customFocusTime" placeholder="Focus time (min)">
+            <input type="number" id="customBreakTime" placeholder="Break time (min)">
+            <button onclick="setCustomProgram()">Set Custom Program</button>
+        </div>
+        
+        <div>
+            <button id="startStop" onclick="startStop()">Start</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        let timeLeft = 1500; // 25 minutes in seconds
+        let isRunning = false;
+        let currentProgram = { sessions: 5, focusTime: 25, breakTime: 5 };
+        let currentSession = 1;
+        let isFocusTime = true;
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const sessionType = isFocusTime ? "Focus" : "Break";
+            document.getElementById('sessionInfo').textContent = 
+                `${sessionType} Session ${currentSession}/${currentProgram.sessions}`;
+        }
+
+        function selectProgram(program) {
+            const [sessions, focusTime, breakTime] = program.split('-').map(Number);
+            currentProgram = { sessions, focusTime, breakTime };
+            reset();
+            highlightSelectedTile(program);
+        }
+
+        function highlightSelectedTile(program) {
+            document.querySelectorAll('.program-tile').forEach(tile => {
+                tile.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function toggleCustomInputs() {
+            const customInputs = document.getElementById('customProgramInputs');
+            customInputs.style.display = customInputs.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function setCustomProgram() {
+            const sessions = parseInt(document.getElementById('customSessions').value);
+            const focusTime = parseInt(document.getElementById('customFocusTime').value);
+            const breakTime = parseInt(document.getElementById('customBreakTime').value);
+            
+            if (sessions > 0 && focusTime > 0 && breakTime > 0) {
+                currentProgram = { sessions, focusTime, breakTime };
+                reset();
+                toggleCustomInputs();
+            } else {
+                alert('Please enter valid values for all fields.');
+            }
+        }
+
+        function startStop() {
+            if (isRunning) {
+                clearInterval(timer);
+                document.getElementById('startStop').textContent = 'Start';
+            } else {
+                timer = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        if (isFocusTime && currentSession < currentProgram.sessions) {
+                            // Switch to break time
+                            isFocusTime = false;
+                            timeLeft = currentProgram.breakTime * 60;
+                        } else if (!isFocusTime && currentSession < currentProgram.sessions) {
+                            // Switch to next focus session
+                            isFocusTime = true;
+                            currentSession++;
+                            timeLeft = currentProgram.focusTime * 60;
+                        } else {
+                            // Program complete
+                            clearInterval(timer);
+                            alert('Pomodoro program completed!');
+                            reset();
+                            return;
+                        }
+                        updateDisplay();
+                    }
+                }, 1000);
+                document.getElementById('startStop').textContent = 'Pause';
+            }
+            isRunning = !isRunning;
+        }
+
+        function reset() {
+            clearInterval(timer);
+            isRunning = false;
+            currentSession = 1;
+            isFocusTime = true;
+            timeLeft = currentProgram.focusTime * 60;
+            document.getElementById('startStop').textContent = 'Start';
+            updateDisplay();
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
