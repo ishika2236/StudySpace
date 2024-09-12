@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 8px 8px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+        form {
+            display: grid;
+            gap: 10px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="card">
+            <h2>Project Overview</h2>
+            <div id="projectOverview"></div>
+        </div>
+        <div class="card">
+            <h2>Next Task</h2>
+            <div id="nextTask"></div>
+        </div>
+        <div class="card">
+            <h2>Current Task</h2>
+            <div id="currentTask"></div>
+        </div>
+        <div class="card">
+            <h2>Deadline Reminder</h2>
+            <div id="deadlineReminder"></div>
+        </div>
+        <div class="card">
+            <h2>Project Progress</h2>
+            <div id="projectProgress"></div>
+        </div>
+        <div class="card">
+            <h2>Add New Project</h2>
+            <button onclick="openModal()">Create Project</button>
+        </div>
+    </div>
+
+    <div id="projectList"></div>
+    <div id="analytics"></div>
+
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Create New Project</h2>
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'SoloProject')">Solo Project</button>
+                <button class="tablinks" onclick="openTab(event, 'CollabProject')">Collaborative Project</button>
+            </div>
+
+            <div id="SoloProject" class="tabcontent" style="display:block;">
+                <form id="soloProjectForm">
+                    <input type="text" name="projectName" placeholder="Project Name" required>
+                    <textarea name="projectDescription" placeholder="Project Description" required></textarea>
+                    <input type="text" name="projectDesign" placeholder="Upload Design (Figma link or image)">
+                    <select name="projectSDLC" required>
+                        <option value="">Select SDLC Approach</option>
+                        <option value="Waterfall">Waterfall</option>
+                        <option value="Agile">Agile</option>
+                        <option value="Scrum">Scrum</option>
+                        <option value="Kanban">Kanban</option>
+                    </select>
+                    <input type="number" name="projectDuration" placeholder="Project Duration (in days)" required>
+                    <input type="date" name="projectDeadline" required>
+                    <input type="text" name="projectStages" placeholder="Project Stages (comma-separated)" required>
+                    <textarea name="projectGoals" placeholder="Project Goals" required></textarea>
+                    <textarea name="projectNotes" placeholder="Additional Notes"></textarea>
+                    <button type="submit">Create Solo Project</button>
+                </form>
+            </div>
+
+            <div id="CollabProject" class="tabcontent">
+                <form id="collabProjectForm">
+                    <input type="text" name="projectName" placeholder="Project Name" required>
+                    <textarea name="projectDescription" placeholder="Project Description" required></textarea>
+                    <input type="text" name="projectMembers" placeholder="Team Members (comma-separated emails)" required>
+                    <input type="text" name="projectDesign" placeholder="Upload Design (Figma link or image)">
+                    <select name="projectSDLC" required>
+                        <option value="">Select SDLC Approach</option>
+                        <option value="Waterfall">Waterfall</option>
+                        <option value="Agile">Agile</option>
+                        <option value="Scrum">Scrum</option>
+                        <option value="Kanban">Kanban</option>
+                    </select>
+                    <input type="number" name="projectDuration" placeholder="Project Duration (in days)" required>
+                    <input type="date" name="projectDeadline" required>
+                    <input type="text" name="projectStages" placeholder="Project Stages (comma-separated)" required>
+                    <textarea name="projectGoals" placeholder="Project Goals" required></textarea>
+                    <textarea name="projectNotes" placeholder="Additional Notes"></textarea>
+                    <button type="submit">Create Collaborative Project</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let projects = JSON.parse(localStorage.getItem('projects')) || [];
+
+        function saveProjects() {
+            localStorage.setItem('projects', JSON.stringify(projects));
+        }
+
+        function createProject(formData, isCollaborative) {
+            const project = {
+                id: Date.now(),
+                name: formData.get('projectName'),
+                description: formData.get('projectDescription'),
+                sdlc: formData.get('projectSDLC'),
+                duration: formData.get('projectDuration'),
+                deadline: formData.get('projectDeadline'),
+                stages: formData.get('projectStages').split(',').map(stage => stage.trim()),
+                goals: formData.get('projectGoals'),
+                notes: formData.get('projectNotes'),
+                tasks: [],
+                completedStages: [],
+                progress: 0,
+                isCollaborative: isCollaborative,
+                members: isCollaborative ? formData.get('projectMembers').split(',').map(email => email.trim()) : [],
+                currentTask: null
+            };
+            projects.push(project);
+            saveProjects();
+            updateDashboard();
+        }
+
+        document.getElementById("soloProjectForm").onsubmit = function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            createProject(formData, false);
+            closeModal();
+        }
+
+        document.getElementById("collabProjectForm").onsubmit = function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            createProject(formData, true);
+            closeModal();
+        }
+
+        function updateDashboard() {
+            updateProjectList();
+            updateProjectOverview();
+            updateNextTask();
+            updateCurrentTask();
+            updateDeadlineReminder();
+            updateProjectProgress();
+            updateAnalytics();
+        }
+
+        function updateProjectList() {
+            const projectList = document.getElementById('projectList');
+            projectList.innerHTML = '<h2>Project List</h2>';
+            projects.forEach(project => {
+                const projectItem = document.createElement('div');
+                projectItem.classList.add('project-item');
+                projectItem.innerHTML = `
+                    <h3>${project.name}</h3>
+                    <p>Progress: ${project.progress}%</p>
+                    <p>Deadline: ${project.deadline}</p>
+                    <h4>Tasks:</h4>
+                    <ul class="task-list">
+                        ${project.tasks.map(task => `<li class="task-item">${task}</li>`).join('')}
+                    </ul>
+                    <button onclick="addTask(${project.id})">Add Task</button>
+                `;
+                projectList.appendChild(projectItem);
+            });
+        }
+
+        function updateProjectOverview() {
+            const overview = document.getElementById('projectOverview');
+            overview.innerHTML = `
+                <p>Total Projects: ${projects.length}</p>
+                <p>Active Projects: ${projects.filter(p => p.progress < 100).length}</p>
+                <p>Completed Projects: ${projects.filter(p => p.progress === 100).length}</p>
+            `;
+        }
+
+        function updateNextTask() {
+            const nextTask = document.getElementById('nextTask');
+            const upcomingTask = projects.flatMap(p => p.tasks).find(task => !task.completed);
+            nextTask.textContent = upcomingTask ? upcomingTask : 'No upcoming tasks';
+        }
+
+        function updateCurrentTask() {
+            const currentTask = document.getElementById('currentTask');
+            const activeTask = projects.find(p => p.currentTask)?.currentTask;
+            currentTask.textContent = activeTask ? activeTask : 'No active task';
+        }
+
+        function updateDeadlineReminder() {
+            const reminder = document.getElementById('deadlineReminder');
+            const upcomingDeadline = projects.reduce((closest, project) => {
+                const deadline = new Date(project.deadline);
+                return (!closest || deadline < closest) ? deadline : closest;
+            }, null);
+            reminder.textContent = upcomingDeadline ? `Next deadline: ${upcomingDeadline.toDateString()}` : 'No upcoming deadlines';
+        }
+
+        function updateProjectProgress() {
+            const progress = document.getElementById('projectProgress');
+            const avgProgress = projects.length ? projects.reduce((sum, p) => sum + p.progress, 0) / projects.length : 0;
+            progress.textContent = `Average progress: ${avgProgress.toFixed(2)}%`;
+        }
+
+        function updateAnalytics() {
+            // Implement analytics update logic here
+        }
+
+        function addTask(projectId) {
+            const taskName = prompt("Enter task name:");
+            if (taskName) {
+                const project = projects.find(p => p.id === projectId);
+                if (project) {
+                    project.tasks.push(taskName);
+                    saveProjects();
+                    updateDashboard();
+                }
+            }
+        }
+
+        function openModal() {
+            document.getElementById('projectModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('projectModal').style.display = 'none';
+        }
+
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Initialize the dashboard
+        updateDashboard();
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('projectModal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
