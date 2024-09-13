@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Analytics Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        canvas{
+            width: 100px;
+            height: 10px;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 600px;
+            
+        }
+        h1, h2 {
+            color: #ffffff;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Product Analytics Dashboard</h1>
+
+        <div class="section task-progress">
+            <h2>Task Progress and Completion</h2>
+            <canvas id="taskStatusChart"></canvas>
+            <canvas id="taskCompletionChart"></canvas>
+        </div>
+
+        <div class="section team-productivity">
+            <h2>Team Productivity</h2>
+            <canvas id="teamUtilizationChart"></canvas>
+            <canvas id="memberContributionChart"></canvas>
+        </div>
+
+        <div class="section resource-utilization">
+            <h2>Resource Utilization</h2>
+            <canvas id="dailyActiveTasksChart"></canvas>
+            <canvas id="timePerTaskChart"></canvas>
+        </div>
+
+        <div class="section timeline-adherence">
+            <h2>Timeline Adherence</h2>
+            <canvas id="progressComparisonChart"></canvas>
+        </div>
+
+        <div class="section budget-overview">
+            <h2>Budget Overview</h2>
+            <canvas id="budgetOverviewChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="input.js"></script>
+    <script src="analytics.js"></script>
+</body>
+</html>
