@@ -34,35 +34,54 @@
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1>Product Analytics Dashboard</h1>
+    <nav id="navbar">
+        <div class="nav-logo">Project Manager</div>
+        <button id="sidebar-toggle">☰</button>
+        <ul class="nav-links">
+            <li><a href="input.html">Home</a></li>
+            <li><a href="analytics.html">Analytics</a></li>
+            <li><a href="#" id="stream-button">Stream</a></li>
+        </ul>
+    </nav>
 
-        <div class="section task-progress">
-            <h2>Task Progress and Completion</h2>
-            <canvas id="taskStatusChart"></canvas>
-            <canvas id="taskCompletionChart"></canvas>
+    <div id="sidebar" class="sidebar">
+        <!-- Sidebar content -->
+    </div>
+
+    <div class="main-content">
+        <h1>Project Analytics Dashboard</h1>
+
+        <div id="project-list">
+            <h2>Projects</h2>
+            <!-- Project list will be populated dynamically -->
         </div>
 
-        <div class="section team-productivity">
-            <h2>Team Productivity</h2>
-            <canvas id="teamUtilizationChart"></canvas>
-            <canvas id="memberContributionChart"></canvas>
-        </div>
-
-        <div class="section resource-utilization">
-            <h2>Resource Utilization</h2>
-            <canvas id="dailyActiveTasksChart"></canvas>
-            <canvas id="timePerTaskChart"></canvas>
-        </div>
-
-        <div class="section timeline-adherence">
-            <h2>Timeline Adherence</h2>
-            <canvas id="progressComparisonChart"></canvas>
-        </div>
-
-        <div class="section budget-overview">
-            <h2>Budget Overview</h2>
-            <canvas id="budgetOverviewChart"></canvas>
+        <div id="analytics-container" class="hidden">
+            <h2 id="selected-project-title"></h2>
+            <div class="dashboard-container">
+                <div class="section task-progress">
+                    <h3>Task Progress and Completion</h3>
+                    <canvas id="taskStatusChart"></canvas>
+                    <canvas id="taskCompletionChart"></canvas>
+                </div>
+                <div class="section team-productivity">
+                    <h3>Team Productivity</h3>
+                    <canvas id="dailyActiveTasksChart"></canvas>
+                    <canvas id="timePerTaskChart"></canvas>
+                </div>
+                <div class="section resource-utilization">
+                    <h3>Resource Utilization</h3>
+                    <canvas id="teamUtilizationChart"></canvas>
+                </div>
+                <div class="section timeline-adherence">
+                    <h3>Timeline Adherence</h3>
+                    <canvas id="progressComparisonChart"></canvas>
+                </div>
+                <div class="section budget-overview">
+                    <h3>Budget Overview</h3>
+                    <canvas id="budgetOverviewChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
