@@ -7,18 +7,17 @@
     <link rel="stylesheet" href="input.css">
 </head>
 <body>
-    <nav id="navbar">
-        <div class="nav-logo">Project Manager</div>
-        <button id="sidebar-toggle">☰</button>
-        <ul class="nav-links">
-            <li><a href="input.html">Home</a></li>
-            <li><a href="analytics.html">Analytics</a></li>
-            <li><a href="#" id="stream-button">Stream</a></li>
-        </ul>
-    </nav>
+    <div class="nav-logo">Project Manager</div>
+
+    <div class="navbar">
+        <a href="#" id="sidebar-toggle">☰</a>
+        <a href="input.html">Home</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="#" id="stream-button">Stream</a>
+    </div>
 
     <div id="sidebar"></div>
-    
+
     <div id="main-content">
         <div id="projectList">
             <h2>Projects</h2>
@@ -26,25 +25,27 @@
             <button onclick="showNewProjectForm()">Create New Project</button>
         </div>
 
-        <div id="newProjectForm" class="hidden">
+        <div id="newProjectForm" style="display: none;">
             <h2>Create New Project</h2>
             <input type="text" id="newProjectName" placeholder="Project Name">
             <textarea id="newProjectDescription" placeholder="Project Description"></textarea>
             <button onclick="createNewProject()">Create</button>
         </div>
 
-        <div id="projectDashboard" class="hidden">
-            <h1 id="projectTitle"></h1>
+        <div id="projectDashboard" style="display: none;">
+            <h2 id="projectTitle"></h2>
+
             <div class="progress-bar">
                 <div class="progress-bar-fill"></div>
             </div>
+
             <button onclick="prevPage()">Previous</button>
             <button onclick="nextPage()">Next</button>
-            <button id="saveProjectBtn" onclick="saveProject()">Save Project</button>
+            <button id="saveProjectBtn">Save Project</button>
             <button id="editProject">Edit Project</button>
 
             <div id="generalInfo">
-                <h2>General Information</h2>
+                <h3>General Information</h3>
                 <input type="text" id="projectName" placeholder="Project Name">
                 <textarea id="projectDescription" placeholder="Project Description"></textarea>
                 <input type="text" id="projectOwner" placeholder="Project Owner">
@@ -54,28 +55,28 @@
                 <input type="date" id="plannedEndDate">
             </div>
 
-            <div id="projectScope" class="hidden">
-                <h2>Project Scope</h2>
-                <h3>Features</h3>
+            <div id="projectScope" style="display: none;">
+                <h3>Project Scope</h3>
+                <h4>Features</h4>
                 <div id="featuresContainer"></div>
                 <input type="text" id="newFeature" placeholder="New Feature">
                 <button onclick="addItem('features')">Add Feature</button>
 
-                <h3>Phases</h3>
+                <h4>Phases</h4>
                 <div id="phasesContainer"></div>
                 <input type="text" id="newPhase" placeholder="New Phase">
                 <button onclick="addItem('phases')">Add Phase</button>
 
-                <h3>Deliverables</h3>
+                <h4>Deliverables</h4>
                 <div id="deliverablesContainer"></div>
                 <input type="text" id="newDeliverable" placeholder="New Deliverable">
                 <button onclick="addItem('deliverables')">Add Deliverable</button>
             </div>
 
-            <div id="taskList" class="hidden">
-                <h2>Task List</h2>
+            <div id="taskList" style="display: none;">
+                <h3>Task List</h3>
                 <div id="taskListContainer"></div>
-                <h3>Add New Task</h3>
+                <h4>Add New Task</h4>
                 <input type="text" id="taskName" placeholder="Task Name">
                 <input type="text" id="taskResponsible" placeholder="Responsible Person">
                 <select id="taskImportance">
@@ -123,6 +124,24 @@
 
                 <h3>Scheduled Meetings</h3>
                 <div id="meetingsContainer"></div>
+            </div>
+            <div id="riskManagement" style="display: none;">
+                <h3>Risk Management</h3>
+                <div id="riskListContainer"></div>
+                <h4>Add New Risk</h4>
+                <input type="text" id="riskName" placeholder="Risk Name">
+                <select id="riskProbability">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+                <select id="riskImpact">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+                <textarea id="riskMitigation" placeholder="Mitigation Strategy"></textarea>
+                <button onclick="addRisk()">Add Risk</button>
             </div>
 
             <div id="summary" class="hidden">

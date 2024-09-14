@@ -56,7 +56,7 @@ function getCurrentProject() {
 
 // Navigation functions
 let currentPage = 'projectList';
-const pages = ['projectList', 'generalInfo', 'projectScope', 'taskList', 'budgetTracking', 'communication', 'summary'];
+const pages = ['projectList', 'generalInfo', 'projectScope', 'taskList', 'budgetTracking', 'communication','riskManagement', 'summary'];
 
 function showSetTotalBudgetPrompt() {
     const totalBudget = prompt("Enter the total budget for the project:");
@@ -77,13 +77,6 @@ function setTotalBudget(amount) {
 function goToDashboard() {
     document.getElementById('summary').style.display = 'none';
     document.getElementById('postSummaryActions').style.display = 'none';
-    document.getElementById('generalInfo').style.display = 'block';
-    currentPage = 'generalInfo';
-    updateProgressBar();
-}
-
-function goToProjectList() {
-    document.getElementById('projectDashboard').style.display = 'none';
     document.getElementById('projectList').style.display = 'block';
     currentPage = 'projectList';
     updateProgressBar();
@@ -129,8 +122,12 @@ function displayProjectList() {
     projectListItems.innerHTML = '';
     projects.forEach(project => {
         const li = document.createElement('li');
-        li.textContent = project.name;
-        li.onclick = () => loadProject(project.id);
+        li.innerHTML = `
+            ${project.name}
+            <button onclick="loadProject(${project.id})">View</button>
+            <button onclick="editProject(${project.id})">Edit</button>
+            <button onclick="viewAnalytics(${project.id})">Analytics</button>
+        `;
         projectListItems.appendChild(li);
     });
 }
@@ -167,6 +164,15 @@ function loadProject(projectId) {
         updateProgressBar();
         updateSidebar();
     }
+}
+
+function editProject(projectId) {
+    loadProject(projectId);
+    enableProjectEditing();
+}
+
+function viewAnalytics(projectId) {
+    window.location.href = `analytics.html?projectId=${projectId}`;
 }
 
 function populateProjectData() {
@@ -315,7 +321,6 @@ function addTask() {
     clearTaskForm();
 }
 
-
 function displayTasks() {
     const project = getCurrentProject();
     if (!project) return;
@@ -408,6 +413,7 @@ function updateBudgetInfo() {
     document.getElementById('costOverruns').textContent = (overrun > 0 ? overrun : 0).toFixed(2);
 }
 
+
 function displayCostItems() {
     const project = getCurrentProject();
     if (!project) return;
@@ -444,7 +450,6 @@ function addCostItem() {
         alert('Please enter a valid name for the cost item.');
     }
 }
-
 function removeCostItem(index) {
     const project = getCurrentProject();
     if (!project) return;
@@ -470,7 +475,6 @@ function addUpdate() {
     document.getElementById('updateContent').value = '';
     saveProjects();
 }
-
 
 function displayUpdates() {
     const project = getCurrentProject();
@@ -605,6 +609,7 @@ function exportProjectData() {
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
 }
+
 function saveProject() {
     saveProjects();
     alert('Project saved successfully!');
@@ -614,23 +619,22 @@ function saveProject() {
 function updateSidebar() {
     const sidebar = document.getElementById('sidebar');
     sidebar.innerHTML = `
-        <button onclick="goToProjectList()">Go to Project List</button>
-        <button onclick="goToDashboard()">Go to Dashboard</button>
-        <button onclick="enterStream()">Enter Stream</button>
+        <button onclick="goToDashboard()">Go to Project List</button>
         <button onclick="showNewProjectForm()">Add Project</button>
-        <button onclick="viewAnalytics()">View Analytics</button>
+        <button onclick="exportProjectData()">Export Project</button>
+        <button onclick="saveProject()">Save Project</button>
     `;
 }
 
-// Placeholder function for entering stream
-function enterStream() {
-    alert('Enter stream functionality not implemented yet.');
+// Function to enable project editing
+function enableProjectEditing() {
+    const inputs = document.querySelectorAll('#projectDashboard input, #projectDashboard textarea');
+    inputs.forEach(input => input.removeAttribute('disabled'));
+
+    document.getElementById('saveProject').style.display = 'inline-block';
+    document.getElementById('editProject').style.display = 'none';
 }
 
-// Function to view analytics
-function viewAnalytics() {
-    alert('Viewing analytics: ' + document.getElementById('analytics').innerHTML);
-}
 // Function to import project data
 function importProjectData(event) {
     const file = event.target.files[0];
@@ -656,21 +660,13 @@ loadProjects();
 displayProjectList();
 
 // Event listeners
-document.getElementById('importProjectFile').addEventListener('change', importProjectData);
-document.getElementById('exportProjectBtn').addEventListener('click', exportProjectData);
-document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
-// ... (keep existing code)
-
 document.addEventListener('DOMContentLoaded', function() {
-    // ... (keep existing event listeners)
-
     const editProjectBtn = document.getElementById('editProject');
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const sidebar = document.getElementById('sidebar');
     const streamButton = document.getElementById('stream-button');
 
     editProjectBtn.addEventListener('click', function() {
-        // Enable editing of project fields
         enableProjectEditing();
     });
 
@@ -679,22 +675,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     streamButton.addEventListener('click', function() {
-        window.location.href = 'stream.html';
+        alert('Stream functionality not implemented yet.');
     });
+
+    document.getElementById('importProjectFile').addEventListener('change', importProjectData);
+    document.getElementById('exportProjectBtn').addEventListener('click', exportProjectData);
+    document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
+
+    updateSidebar();
 });
-
-function enableProjectEditing() {
-    // Enable input fields and show relevant buttons
-    const inputs = document.querySelectorAll('#projectDashboard input, #projectDashboard textarea');
-    inputs.forEach(input => input.removeAttribute('disabled'));
-
-    // Show save button
-    document.getElementById('saveProject').style.display = 'inline-block';
-
-    // Hide edit button
-    document.getElementById('editProject').style.display = 'none';
-}
-
-// ... (keep existing functions)
-
-// You may want to add more event listeners here for other interactive elements

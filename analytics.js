@@ -1,189 +1,162 @@
+// Global variables
+let currentProjectId = null;
+let projects = [];
+
 document.addEventListener('DOMContentLoaded', function() {
-    const projectData = JSON.parse(localStorage.getItem('projectData')) || {};
-    const analytics = projectData.analytics || {};
+    updateSidebar();
+    loadProjects();
+    setupEventListeners();
+});
 
-    // Set up Chart.js default styles for dark theme
-    Chart.defaults.color = '#e0e0e0';
-    Chart.defaults.borderColor = '#555';
+function updateSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.innerHTML = `
+        <button onclick="goToDashboard()">Go to Dashboard</button>
+        <button onclick="viewAllAnalytics()">View All Analytics</button>
+    `;
+}
 
-    // Task Status Pie Chart
-    const taskStatusCtx = document.getElementById('taskStatusChart').getContext('2d');
-    new Chart(taskStatusCtx, {
+function goToDashboard() {
+    window.location.href = 'dashboard.html';
+}
+
+function viewAllAnalytics() {
+    loadAnalytics();
+}
+
+function setupEventListeners() {
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+    });
+
+    const streamButton = document.getElementById('stream-button');
+    streamButton.addEventListener('click', function() {
+        alert('Stream functionality not implemented yet.');
+    });
+}
+
+function loadProjects() {
+    projects = JSON.parse(localStorage.getItem('projects')) || [];
+    const urlParams = new URLSearchParams(window.location.search);
+    currentProjectId = urlParams.get('projectId');
+
+    setupProjectSelector();
+    loadAnalytics();
+}
+
+function setupProjectSelector() {
+    const selector = document.getElementById('project-selector');
+    selector.innerHTML = '<select id="project-select"><option value="all">All Projects</option></select>';
+    const select = document.getElementById('project-select');
+
+    projects.forEach(project => {
+        const option = document.createElement('option');
+        option.value = project.id;
+        option.textContent = project.name;
+        select.appendChild(option);
+    });
+
+    if (currentProjectId) {
+        select.value = currentProjectId;
+    }
+
+    select.addEventListener('change', function() {
+        currentProjectId = this.value === 'all' ? null : this.value;
+        loadAnalytics();
+    });
+}
+
+function loadAnalytics() {
+    if (currentProjectId) {
+        const project = projects.find(p => p.id.toString() === currentProjectId);
+        if (project) {
+            document.getElementById('analytics-title').textContent = `Analytics for ${project.name}`;
+            displayProjectAnalytics(project);
+        } else {
+            alert('Project not found');
+        }
+    } else {
+        document.getElementById('analytics-title').textContent = 'Analytics for All Projects';
+        displayAllProjectsAnalytics();
+    }
+}
+
+function displayProjectAnalytics(project) {
+    displayTaskStatusChart(project);
+    displayTaskCompletionChart(project);
+    displayBudgetOverviewChart(project);
+    displayTeamUtilizationChart(project);
+    displayTimelineAdherenceChart(project);
+    displayRiskAssessmentChart(project);
+}
+
+function displayAllProjectsAnalytics() {
+    displayOverallTaskStatusChart();
+    displayOverallTaskCompletionChart();
+    displayOverallBudgetChart();
+    displayOverallTeamUtilizationChart();
+    displayOverallTimelineAdherenceChart();
+    displayOverallRiskAssessmentChart();
+}
+
+// Individual chart functions (implementation provided earlier)
+
+// Overall analytics functions
+function displayOverallTaskStatusChart() {
+    const ctx = document.getElementById('overallTaskStatusChart').getContext('2d');
+    const statusCounts = projects.reduce((acc, project) => {
+        acc.completed += project.tasks.filter(t => t.status === 'Completed').length;
+        acc.inProgress += project.tasks.filter(t => t.status === 'In Progress').length;
+        acc.notStarted += project.tasks.filter(t => t.status === 'Not Started').length;
+        return acc;
+    }, { completed: 0, inProgress: 0, notStarted: 0 });
+
+    new Chart(ctx, {
         type: 'pie',
         data: {
             labels: ['Completed', 'In Progress', 'Not Started'],
             datasets: [{
-                label: 'Task Status',
-                data: analytics.taskStatus || [0, 0, 0],
+                data: [statusCounts.completed, statusCounts.inProgress, statusCounts.notStarted],
                 backgroundColor: ['#4caf50', '#ff9800', '#f44336']
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Task Status Distribution'
-                }
+            title: {
+                display: true,
+                text: 'Overall Task Status Distribution'
             }
         }
     });
+}
 
-    // Task Completion Rate Line Chart
-    const taskCompletionCtx = document.getElementById('taskCompletionChart').getContext('2d');
-    new Chart(taskCompletionCtx, {
-        type: 'line',
-        data: {
-            labels: projectData.tasks.map(task => task.name),
-            datasets: [{
-                label: 'Task Completion Rate',
-                data: analytics.taskCompletionRate || [],
-                borderColor: '#2196f3',
-                backgroundColor: 'rgba(33, 150, 243, 0.2)',
-                fill: true,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Task Completion Rate'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
-            }
-        }
+function displayOverallTaskCompletionChart() {
+    const ctx = document.getElementById('overallTaskCompletionChart').getContext('2d');
+    const projectNames = projects.map(p => p.name);
+    const projectProgress = projects.map(p => {
+        const totalTasks = p.tasks.length;
+        const completedTasks = p.tasks.filter(t => t.status === 'Completed').length;
+        return (completedTasks / totalTasks) * 100 || 0;
     });
 
-    // Daily Active Tasks
-    const dailyActiveTasksCtx = document.getElementById('dailyActiveTasksChart').getContext('2d');
-    new Chart(dailyActiveTasksCtx, {
+    new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Active Tasks'],
+            labels: projectNames,
             datasets: [{
-                label: 'Daily Active Tasks',
-                data: [analytics.dailyActiveTasks || 0],
+                label: 'Project Completion (%)',
+                data: projectProgress,
                 backgroundColor: '#2196f3'
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Daily Active Tasks'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Time Taken per Task Line Chart
-    const timePerTaskCtx = document.getElementById('timePerTaskChart').getContext('2d');
-    new Chart(timePerTaskCtx, {
-        type: 'line',
-        data: {
-            labels: projectData.tasks.map(task => task.name),
-            datasets: [{
-                label: 'Time Taken (hours)',
-                data: analytics.timePerTask || [],
-                borderColor: '#2196f3',
-                backgroundColor: 'rgba(33, 150, 243, 0.2)',
-                fill: true,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Time Taken per Task'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Team Utilization Pie Chart
-    const teamUtilizationCtx = document.getElementById('teamUtilizationChart').getContext('2d');
-    new Chart(teamUtilizationCtx, {
-        type: 'pie',
-        data: {
-            labels: projectData.generalInfo.teamMembers,
-            datasets: [{
-                label: 'Utilization (%)',
-                data: analytics.teamUtilization || [],
-                backgroundColor: ['#4caf50', '#ff9800', '#f44336', '#9c27b0', '#00bcd4', '#ffeb3b']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Team Utilization'
-                }
-            }
-        }
-    });
-
-    // Planned vs Actual Progress Line Chart
-    const progressComparisonCtx = document.getElementById('progressComparisonChart').getContext('2d');
-    new Chart(progressComparisonCtx, {
-        type: 'line',
-        data: {
-            labels: projectData.tasks.map(task => task.name),
-            datasets: [{
-                label: 'Planned Progress',
-                data: analytics.plannedProgress || [],
-                borderColor: '#4caf50',
-                fill: false
-            }, {
-                label: 'Actual Progress',
-                data: analytics.actualProgress || [],
-                borderColor: '#f44336',
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Planned vs Actual Progress'
-                }
+            title: {
+                display: true,
+                text: 'Overall Project Completion Progress'
             },
             scales: {
                 y: {
@@ -193,29 +166,97 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+}
 
-    // Budget Overview Chart
-    const budgetOverviewCtx = document.getElementById('budgetOverviewChart').getContext('2d');
-    new Chart(budgetOverviewCtx, {
-        type: 'bar',
+function displayOverallBudgetChart() {
+    const ctx = document.getElementById('overallBudgetChart').getContext('2d');
+    const totalBudget = projects.reduce((sum, p) => sum + p.budget.total, 0);
+    const usedBudget = projects.reduce((sum, p) => sum + p.budget.used, 0);
+
+    new Chart(ctx, {
+        type: 'doughnut',
         data: {
-            labels: ['Total Budget', 'Budget Used'],
+            labels: ['Used Budget', 'Remaining Budget'],
             datasets: [{
-                label: 'Budget',
-                data: [projectData.budget?.total || 0, projectData.budget?.used || 0],
-                backgroundColor: ['#2196f3', '#f44336']
+                data: [usedBudget, totalBudget - usedBudget],
+                backgroundColor: ['#f44336', '#4caf50']
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Budget Overview'
+            title: {
+                display: true,
+                text: 'Overall Budget Overview'
+            }
+        }
+    });
+}
+
+function displayOverallTeamUtilizationChart() {
+    const ctx = document.getElementById('overallTeamUtilizationChart').getContext('2d');
+    const allMembers = new Set(projects.flatMap(p => p.generalInfo.teamMembers));
+    const memberUtilization = Array.from(allMembers).map(member => {
+        const memberTasks = projects.flatMap(p => p.tasks.filter(t => t.responsible === member));
+        return {
+            name: member,
+            utilization: memberTasks.reduce((sum, task) => sum + task.progress, 0) / memberTasks.length || 0
+        };
+    });
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: memberUtilization.map(m => m.name),
+            datasets: [{
+                label: 'Utilization (%)',
+                data: memberUtilization.map(m => m.utilization),
+                backgroundColor: '#9c27b0'
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Overall Team Utilization'
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
                 }
+            }
+        }
+    });
+}
+
+function displayOverallTimelineAdherenceChart() {
+    const ctx = document.getElementById('overallTimelineAdherenceChart').getContext('2d');
+    const projectNames = projects.map(p => p.name);
+    const plannedDuration = projects.map(p => p.tasks.reduce((sum, t) => sum + t.estimatedDuration, 0));
+    const actualDuration = projects.map(p => p.tasks.reduce((sum, t) => sum + t.actualDuration, 0));
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: projectNames,
+            datasets: [
+                {
+                    label: 'Planned Duration',
+                    data: plannedDuration,
+                    backgroundColor: '#2196f3'
+                },
+                {
+                    label: 'Actual Duration',
+                    data: actualDuration,
+                    backgroundColor: '#f44336'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Overall Timeline Adherence'
             },
             scales: {
                 y: {
@@ -224,87 +265,50 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+}
 
-    // Individual Member Contribution Pie Chart
-    const memberContributionCtx = document.getElementById('memberContributionChart').getContext('2d');
-    const memberContributions = calculateMemberContributions(projectData);
-    new Chart(memberContributionCtx, {
-        type: 'pie',
+function displayOverallRiskAssessmentChart() {
+    const ctx = document.getElementById('overallRiskAssessmentChart').getContext('2d');
+    const riskCategories = ['Schedule Risk', 'Budget Risk', 'Scope Risk', 'Resource Risk'];
+    const averageRiskLevels = riskCategories.map(category => {
+        const risks = projects.map(p => {
+            switch(category) {
+                case 'Schedule Risk': return calculateScheduleRisk(p);
+                case 'Budget Risk': return calculateBudgetRisk(p);
+                case 'Scope Risk': return calculateScopeRisk(p);
+                case 'Resource Risk': return calculateResourceRisk(p);
+            }
+        });
+        return risks.reduce((sum, risk) => sum + risk, 0) / risks.length;
+    });
+
+    new Chart(ctx, {
+        type: 'radar',
         data: {
-            labels: Object.keys(memberContributions),
+            labels: riskCategories,
             datasets: [{
-                label: 'Contribution',
-                data: Object.values(memberContributions),
-                backgroundColor: ['#4caf50', '#ff9800', '#f44336', '#9c27b0', '#00bcd4', '#ffeb3b']
+                label: 'Average Risk Level',
+                data: averageRiskLevels,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgb(255, 99, 132)',
+                pointBackgroundColor: 'rgb(255, 99, 132)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(255, 99, 132)'
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Individual Member Contribution'
+            title: {
+                display: true,
+                text: 'Overall Risk Assessment'
+            },
+            scale: {
+                ticks: {
+                    beginAtZero: true,
+                    max: 100
                 }
             }
         }
     });
-});
-
-function calculateMemberContributions(projectData) {
-    const contributions = {};
-    projectData.tasks.forEach(task => {
-        if (!contributions[task.responsible]) {
-            contributions[task.responsible] = 0;
-        }
-        contributions[task.responsible] += task.progress;
-    });
-    return contributions;
-}
-
-// Function to update analytics (call this whenever project data changes)
-function updateAnalytics() {
-    const projectData = JSON.parse(localStorage.getItem('projectData')) || {};
-    const analytics = calculateAnalytics(projectData);
-    projectData.analytics = analytics;
-    localStorage.setItem('projectData', JSON.stringify(projectData));
-}
-
-function calculateAnalytics(projectData) {
-    const tasks = projectData.tasks || [];
-    const teamMembers = projectData.generalInfo.teamMembers || [];
-
-    const taskStatus = [
-        tasks.filter(task => task.status === 'Completed').length,
-        tasks.filter(task => task.status === 'In Progress').length,
-        tasks.filter(task => task.status === 'Not Started').length
-    ];
-
-    const taskCompletionRate = tasks.map(task => task.progress);
-
-    const dailyActiveTasks = tasks.filter(task => task.status === 'In Progress').length;
-
-    const timePerTask = tasks.map(task => task.actualDuration);
-
-    const teamUtilization = teamMembers.map(member => {
-        const memberTasks = tasks.filter(task => task.responsible === member);
-        const totalDuration = memberTasks.reduce((sum, task) => sum + task.actualDuration, 0);
-        const totalEstimatedDuration = memberTasks.reduce((sum, task) => sum + task.estimatedDuration, 0);
-        return (totalDuration / totalEstimatedDuration) * 100 || 0;
-    });
-
-    const plannedProgress = tasks.map(task => (task.estimatedDuration / projectData.generalInfo.plannedDuration) * 100);
-    const actualProgress = tasks.map(task => (task.actualDuration / projectData.generalInfo.plannedDuration) * 100);
-
-    return {
-        taskStatus,
-        taskCompletionRate,
-        dailyActiveTasks,
-        timePerTask,
-        teamUtilization,
-        plannedProgress,
-        actualProgress
-    };
 }
