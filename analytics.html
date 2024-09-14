@@ -3,90 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Analytics Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-        }
-        canvas{
-            width: 100px;
-            height: 10px;
-        }
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .section {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            height: 600px;
-            
-        }
-        h1, h2 {
-            color: #ffffff;
-        }
-        
-    </style>
+    <title>Project Analytics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="analytics.css">
 </head>
 <body>
-    <nav id="navbar">
-        <div class="nav-logo">Project Manager</div>
-        <button id="sidebar-toggle">☰</button>
-        <ul class="nav-links">
-            <li><a href="input.html">Home</a></li>
-            <li><a href="analytics.html">Analytics</a></li>
-            <li><a href="#" id="stream-button">Stream</a></li>
-        </ul>
-    </nav>
-
-    <div id="sidebar" class="sidebar">
-        <!-- Sidebar content -->
-    </div>
-
-    <div class="main-content">
-        <h1>Project Analytics Dashboard</h1>
-
-        <div id="project-list">
-            <h2>Projects</h2>
-            <!-- Project list will be populated dynamically -->
-        </div>
-
-        <div id="analytics-container" class="hidden">
-            <h2 id="selected-project-title"></h2>
-            <div class="dashboard-container">
-                <div class="section task-progress">
-                    <h3>Task Progress and Completion</h3>
-                    <canvas id="taskStatusChart"></canvas>
+    <div class="container">
+        <h1 id="projectTitle">Project Analytics</h1>
+        
+        <div class="chart-row">
+            <div class="chart-col">
+                <div class="chart-container">
                     <canvas id="taskCompletionChart"></canvas>
                 </div>
-                <div class="section team-productivity">
-                    <h3>Team Productivity</h3>
-                    <canvas id="dailyActiveTasksChart"></canvas>
-                    <canvas id="timePerTaskChart"></canvas>
-                </div>
-                <div class="section resource-utilization">
-                    <h3>Resource Utilization</h3>
-                    <canvas id="teamUtilizationChart"></canvas>
-                </div>
-                <div class="section timeline-adherence">
-                    <h3>Timeline Adherence</h3>
-                    <canvas id="progressComparisonChart"></canvas>
-                </div>
-                <div class="section budget-overview">
-                    <h3>Budget Overview</h3>
-                    <canvas id="budgetOverviewChart"></canvas>
+            </div>
+            <div class="chart-col">
+                <div class="chart-container">
+                    <canvas id="budgetUsageChart"></canvas>
                 </div>
             </div>
         </div>
+        
+        <div class="chart-row">
+            <div class="chart-col">
+                <div class="chart-container">
+                    <canvas id="taskStatusChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-col">
+                <div class="chart-container">
+                    <canvas id="memberProductivityChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-row">
+            <div class="chart-col">
+                <div class="chart-container">
+                    <canvas id="deadlineChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-col">
+                <div class="chart-container">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="info">
+            <div class="info-tile">
+                <h3>Important Meetings</h3>
+                <ul id="importantMeetings"></ul>
+            </div>
+            
+            <div class="info-tile">
+                <h3>Announcements</h3>
+                <ul id="announcements"></ul>
+            </div>
+            
+            <div class="info-tile">
+                <h3>Ongoing Tasks</h3>
+                <ul id="ongoingTasks"></ul>
+            </div>
+            
+            <div class="info-tile">
+                <h3>Goals and Deliverables</h3>
+                <ul id="goalsDeliverables"></ul>
+            </div>
+        </div>
+        
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="input.js"></script>
-    <script src="analytics.js"></script>
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Function to load project data
+        function loadProjectData(projectId) {
+            const projects = JSON.parse(localStorage.getItem('projects')) || [];
+            return projects.find(p => p.id === parseInt(projectId));
+        }
+
+        // Function to create task completion chart
+        function createTaskCompletionChart(project) {
+            const completedTasks = project.tasks.filter(task => task.status === 'Completed').length;
+            const totalTasks = project.tasks.length;
+            const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+            new Chart(document.getElementById('taskCompletionChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Remaining'],
+                    datasets: [{
+                        data: [completionRate, 100 - completionRate],
+                        backgroundColor: ['#4CAF50', '#FFC107']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Task Completion Rate',
+                            color: '#ffffff'
+                        },
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create budget usage chart
+        function createBudgetUsageChart(project) {
+            const budgetUsed = project.budget.used;
+            const totalBudget = project.budget.total;
+            const remainingBudget = totalBudget - budgetUsed;
+
+            new Chart(document.getElementById('budgetUsageChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Budget Used', 'Remaining Budget'],
+                    datasets: [{
+                        data: [budgetUsed, remainingBudget],
+                        backgroundColor: ['#2196F3', '#9C27B0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Budget Usage',
+                            color: '#ffffff'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($)',
+                                color: '#ffffff'
+                            },
+                            ticks: {
+                                color: '#ffffff'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create task status chart
+        function createTaskStatusChart(project) {
+            const statusCounts = project.tasks.reduce((acc, task) => {
+                acc[task.status] = (acc[task.status] || 0) + 1;
+                return acc;
+            }, {});
+
+            new Chart(document.getElementById('taskStatusChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: ['#FF5722', '#03A9F4', '#8BC34A']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Task Status Distribution',
+                            color: '#ffffff'
+                        },
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create member productivity chart
+        function createMemberProductivityChart(project) {
+            const teamMembers = project.generalInfo.teamMembers;
+            const taskCounts = project.tasks.reduce((acc, task) => {
+                acc[task.responsible] = (acc[task.responsible] || 0) + 1;
+                return acc;
+            }, {});
+
+            const productivityData = teamMembers.map(member => {
+                const taskCount = taskCounts[member] || 0;
+                return (taskCount / project.tasks.length) * 100;
+            });
+
+            new Chart(document.getElementById('memberProductivityChart'), {
+                type: 'bar',
+                data: {
+                    labels: teamMembers,
+                    datasets: [{
+                        label: 'Productivity (%)',
+                        data: productivityData,
+                        backgroundColor: '#E91E63'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Team Member Productivity',
+                            color: '#ffffff'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Productivity (%)',
+                                color: '#ffffff'
+                            },
+                            ticks: {
+                                color: '#ffffff'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createDeadlineChart(project) {
+            const currentDate = new Date();
+            const tasksWithDeadlines = project.tasks.filter(task => task.deadline);
+            const sortedTasks = tasksWithDeadlines.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+            const labels = sortedTasks.map(task => task.name);
+            const data = sortedTasks.map(task => {
+                const deadline = new Date(task.deadline);
+                const daysUntilDeadline = Math.ceil((deadline - currentDate) / (1000 * 60 * 60 * 24));
+                return daysUntilDeadline;
+            });
+
+            new Chart(document.getElementById('deadlineChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Days until deadline',
+                        data: data,
+                        borderColor: '#FFEB3B',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Task Deadlines',
+                            color: '#ffffff'
+                        },
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Days',
+                                color: '#ffffff'
+                            },
+                            ticks: {
+                                color: '#ffffff'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to create risk chart
+        function createRiskChart(project) {
+            // Assuming we have a risks array in the project object
+            const riskLevels = project.risks ? project.risks.map(risk => risk.level) : [];
+            const riskCounts = {
+                'High': riskLevels.filter(level => level === 'High').length,
+                'Medium': riskLevels.filter(level => level === 'Medium').length,
+                'Low': riskLevels.filter(level => level === 'Low').length
+            };
+
+            new Chart(document.getElementById('riskChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(riskCounts),
+                    datasets: [{
+                        data: Object.values(riskCounts),
+                        backgroundColor: ['#F44336', '#FF9800', '#4CAF50']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Risk Distribution',
+                            color: '#ffffff'
+                        },
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to populate info tiles
+        function populateInfoTiles(project) {
+            // Important Meetings
+            const meetingsUl = document.getElementById('importantMeetings');
+            meetingsUl.innerHTML = ''; // Clear existing content
+            project.communication.meetings.slice(0, 5).forEach(meeting => {
+                const li = document.createElement('li');
+                li.textContent = `${meeting.title} - ${new Date(meeting.dateTime).toLocaleString()}`;
+                meetingsUl.appendChild(li);
+            });
+
+            // Announcements
+            const announcementsUl = document.getElementById('announcements');
+            announcementsUl.innerHTML = ''; // Clear existing content
+            project.communication.updates.slice(0, 5).forEach(update => {
+                const li = document.createElement('li');
+                li.textContent = update.content;
+                announcementsUl.appendChild(li);
+            });
+
+            // Ongoing Tasks
+            const tasksUl = document.getElementById('ongoingTasks');
+            tasksUl.innerHTML = ''; // Clear existing content
+            project.tasks.filter(task => task.status === 'In Progress').slice(0, 5).forEach(task => {
+                const li = document.createElement('li');
+                li.textContent = `${task.name} - ${task.responsible}`;
+                tasksUl.appendChild(li);
+            });
+
+            // Goals and Deliverables
+            const goalsUl = document.getElementById('goalsDeliverables');
+            goalsUl.innerHTML = ''; // Clear existing content
+            project.projectScope.deliverables.forEach(deliverable => {
+                const li = document.createElement('li');
+                li.textContent = deliverable;
+                goalsUl.appendChild(li);
+            });
+        }
+
+        // Function to calculate and display overall project progress
+        function displayProjectProgress(project) {
+            const completedTasks = project.tasks.filter(task => task.status === 'Completed').length;
+            const totalTasks = project.tasks.length;
+            const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+            const progressElement = document.createElement('div');
+            progressElement.innerHTML = `
+                <h3>Overall Project Progress</h3>
+                <div style="background-color: #444; height: 20px; border-radius: 10px; overflow: hidden;">
+                    <div style="background-color: #4CAF50; width: ${progress}%; height: 100%;"></div>
+                </div>
+                <p>${progress.toFixed(2)}% Complete</p>
+            `;
+
+            document.querySelector('.container').insertBefore(progressElement, document.querySelector('.chart-row'));
+        }
+
+        // Function to display top performers
+        function displayTopPerformers(project) {
+            const taskCounts = project.tasks.reduce((acc, task) => {
+                acc[task.responsible] = (acc[task.responsible] || 0) + 1;
+                return acc;
+            }, {});
+
+            const sortedPerformers = Object.entries(taskCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3);
+
+            const topPerformersElement = document.createElement('div');
+            topPerformersElement.innerHTML = `
+                <h3>Top Performers</h3>
+                <ol>
+                    ${sortedPerformers.map(([name, count]) => `<li>${name} - ${count} tasks</li>`).join('')}
+                </ol>
+            `;
+
+            document.querySelector('.container').appendChild(topPerformersElement);
+        }
+
+        // Main function to initialize the page
+        function initAnalyticsPage() {
+            const projectId = getUrlParameter('projectId');
+            const project = loadProjectData(projectId);
+
+            if (project) {
+                document.getElementById('projectTitle').textContent = `${project.name} - Analytics`;
+                createTaskCompletionChart(project);
+                createBudgetUsageChart(project);
+                createTaskStatusChart(project);
+                createMemberProductivityChart(project);
+                createDeadlineChart(project);
+                createRiskChart(project);
+                populateInfoTiles(project);
+                displayProjectProgress(project);
+                displayTopPerformers(project);
+            } else {
+                alert('Project not found');
+            }
+        }
+
+        // Initialize the page when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initAnalyticsPage)
+    </script>
 </body>
 </html>

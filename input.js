@@ -115,7 +115,17 @@ function updateProgressBar() {
     const progress = (pages.indexOf(currentPage) + 1) / pages.length * 100;
     document.querySelector('.progress-bar-fill').style.width = `${progress}%`;
 }
-
+function deleteProject(projectId) {
+    const index = projects.findIndex(p => p.id === projectId);
+    if (index !== -1) {
+        if (confirm('Are you sure you want to delete this project?')) {
+            projects.splice(index, 1);
+            saveProjects();
+            displayProjectList();
+            alert('Project deleted successfully!');
+        }
+    }
+}
 // Project list functions
 function displayProjectList() {
     const projectListItems = document.getElementById('projectListItems');
@@ -124,9 +134,12 @@ function displayProjectList() {
         const li = document.createElement('li');
         li.innerHTML = `
             ${project.name}
+            <div class="controls">
             <button onclick="loadProject(${project.id})">View</button>
             <button onclick="editProject(${project.id})">Edit</button>
             <button onclick="viewAnalytics(${project.id})">Analytics</button>
+            <button onclick="deleteProject(${project.id})">Delete</button>
+            </div>
         `;
         projectListItems.appendChild(li);
     });
@@ -403,14 +416,16 @@ function clearTaskForm() {
     document.getElementById('taskBudget').value = '';
 }
 
-// Budget functions
 function updateBudgetInfo() {
     const project = getCurrentProject();
     if (!project) return;
 
     document.getElementById('budgetUsed').textContent = project.budget.used.toFixed(2);
+    const remainingBudget = project.budget.total - project.budget.used;
+    document.getElementById('remainingBudget').textContent = remainingBudget.toFixed(2);
     const overrun = project.budget.used - project.budget.total;
     document.getElementById('costOverruns').textContent = (overrun > 0 ? overrun : 0).toFixed(2);
+    saveProjects();
 }
 
 
@@ -621,8 +636,9 @@ function updateSidebar() {
     sidebar.innerHTML = `
         <button onclick="goToDashboard()">Go to Project List</button>
         <button onclick="showNewProjectForm()">Add Project</button>
-        <button onclick="exportProjectData()">Export Project</button>
-        <button onclick="saveProject()">Save Project</button>
+        <button><a href="http://127.0.0.1:5500/stream.html">Join Stream</a></button>
+        
+
     `;
 }
 
@@ -654,11 +670,70 @@ function importProjectData(event) {
         reader.readAsText(file);
     }
 }
+function addRisk() {
+    const project = getCurrentProject();
+    if (!project) return;
+
+    const risk = {
+        id: Date.now(),
+        name: document.getElementById('riskName').value,
+        description: document.getElementById('riskDescription').value,
+        probability: document.getElementById('riskProbability').value,
+        impact: document.getElementById('riskImpact').value,
+        mitigationPlan: document.getElementById('riskMitigation').value
+    };
+
+    if (!project.risks) {
+        project.risks = [];
+    }
+
+    project.risks.push(risk);
+    displayRisks();
+    clearRiskForm();
+    saveProjects();
+}
+
+function displayRisks() {
+    const project = getCurrentProject();
+    if (!project || !project.risks) return;
+
+    const riskListContainer = document.getElementById('riskListContainer');
+    riskListContainer.innerHTML = '';
+
+    project.risks.forEach((risk, index) => {
+        const riskElement = document.createElement('div');
+        riskElement.className = 'risk-item';
+        riskElement.innerHTML = `
+            • <strong>${risk.name}</strong><br>
+            Description: ${risk.description}<br>
+            Probability: ${risk.probability} | Impact: ${risk.impact}<br>
+            Mitigation Plan: ${risk.mitigationPlan}<br>
+            <button onclick="removeRisk(${index})">Remove</button>
+        `;
+        riskListContainer.appendChild(riskElement);
+    });
+}
+function removeRisk(index) {
+    const project = getCurrentProject();
+    if (!project || !project.risks) return;
+
+    project.risks.splice(index, 1);
+    displayRisks();
+    saveProjects();
+}
+
+function clearRiskForm() {
+    document.getElementById('riskName').value = '';
+    document.getElementById('riskDescription').value = '';
+    document.getElementById('riskProbability').value = 'Low';
+    document.getElementById('riskImpact').value = 'Low';
+    document.getElementById('riskMitigation').value = '';
+}
 
 // Initialize the application
 loadProjects();
 displayProjectList();
-
+updateSidebar();
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
     const editProjectBtn = document.getElementById('editProject');
@@ -681,6 +756,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('importProjectFile').addEventListener('change', importProjectData);
     document.getElementById('exportProjectBtn').addEventListener('click', exportProjectData);
     document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
+    document.getElementById('addRiskBtn').addEventListener('click', addRisk);
 
     updateSidebar();
 });

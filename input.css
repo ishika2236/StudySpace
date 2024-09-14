@@ -143,3 +143,11 @@ li:hover {
   .sidebar.open {
     left: 0;
   }
+  #projectListItems li{
+    display: flex;
+    justify-content: space-between;
+  }
+  button a{
+    text-decoration: none;
+    color: white;
+  }
