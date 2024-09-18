@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="input.css">
 </head>
 <body>
-    <div class="nav-logo">Project Manager</div>
+    <!-- <div class="nav-logo">Project Manager</div> -->
 
     <!-- <div class="navbar">
         <a href="#" id="sidebar-toggle">☰</a>
@@ -49,7 +49,18 @@
                 <textarea id="projectDescription" placeholder="Project Description"></textarea>
                 <input type="text" id="projectOwner" placeholder="Project Owner">
                 <input type="text" id="projectManager" placeholder="Project Manager">
-                <input type="text" id="teamMembers" placeholder="Team Members (comma-separated)">
+                <div id="collaboratorsContainer">
+                    <h4>Collaborators</h4>
+                    <div id="collaboratorFields">
+                        <input type="text" id="teamMembers" placeholder="Team Members">
+                        <div class="collaborator-input">
+                            <input type="text" class="collaborator-name" placeholder="Collaborator Name">
+                            <button type="button" class="remove-collaborator" onclick="removeCollaboratorField(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addCollaboratorField()">Add Collaborator</button>
+                </div>
+               
                 <input type="date" id="startDate">
                 <input type="date" id="plannedEndDate">
             </div>
@@ -141,7 +152,7 @@
                     <option value="High">High</option>
                 </select>
                 <textarea id="riskMitigation" placeholder="Mitigation Plan"></textarea>
-                <button id="addRiskBtn">Add Risk</button>
+                <button id="addRiskBtn" onclick="addRisk()">Add Risk</button>
             </div>
 
             <div id="summary" class="hidden">
@@ -149,14 +160,11 @@
             </div>
 
             <div id="postSummaryActions" class="hidden">
-                <button onclick="showSetTotalBudgetPrompt()">Set Total Budget</button>
-                <button onclick="goToProjectList()">Go to Project List</button>
+                <button onclick="goToDashboard()">Go to Project List</button>
             </div>
         </div>
 
-        <div id="analytics" class="hidden">
-            <!-- Analytics will be populated here -->
-        </div>
+     
     </div>
 
     <script src="input.js"></script>

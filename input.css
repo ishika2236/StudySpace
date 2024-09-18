@@ -151,3 +151,6 @@ li:hover {
     text-decoration: none;
     color: white;
   }
+  .main-content{
+    left: 40px;
+  }

@@ -31,7 +31,8 @@ function createProject(name, description) {
         communication: {
             updates: [],
             meetings: []
-        }
+        },
+        risks: []
     };
     projects.push(project);
     return project;
@@ -75,11 +76,14 @@ function setTotalBudget(amount) {
 }
 
 function goToDashboard() {
+    document.getElementById('projectDashboard').style.display = 'none';
+    document.getElementById('newProjectForm').style.display = 'none';
     document.getElementById('summary').style.display = 'none';
     document.getElementById('postSummaryActions').style.display = 'none';
     document.getElementById('projectList').style.display = 'block';
     currentPage = 'projectList';
     updateProgressBar();
+    displayProjectList();
 }
 
 function nextPage() {
@@ -128,6 +132,7 @@ function deleteProject(projectId) {
 }
 // Project list functions
 function displayProjectList() {
+    document.getElementById('newProjectForm').style.display = 'none';
     const projectListItems = document.getElementById('projectListItems');
     projectListItems.innerHTML = '';
     projects.forEach(project => {
@@ -164,6 +169,7 @@ function createNewProject() {
 function loadProject(projectId) {
     currentProjectId = projectId;
     const project = getCurrentProject();
+    document.getElementById('projectList').style.display = 'none';
     if (project) {
         document.getElementById('projectList').style.display = 'none';
         document.getElementById('newProjectForm').style.display = 'none';
@@ -191,6 +197,21 @@ function viewAnalytics(projectId) {
 function populateProjectData() {
     const project = getCurrentProject();
     if (!project) return;
+    const collaboratorFields = document.getElementById('collaboratorFields');
+    collaboratorFields.innerHTML = '';
+    project.generalInfo.teamMembers.forEach(member => {
+        const newField = document.createElement('div');
+        newField.className = 'collaborator-input';
+        newField.innerHTML = `
+            <input type="text" class="collaborator-name" value="${member}" placeholder="Collaborator Name">
+            <button type="button" class="remove-collaborator" onclick="removeCollaboratorField(this)">Remove</button>
+        `;
+        collaboratorFields.appendChild(newField);
+    });
+    if (project.generalInfo.teamMembers.length === 0) {
+        addCollaboratorField();
+    }
+
 
     // Populate General Info
     document.getElementById('projectName').value = project.generalInfo.projectName;
@@ -218,6 +239,7 @@ function populateProjectData() {
     displayUpdates();
     displayMeetings();
     updateMeetingInvitees();
+    displayRisks();
 
     // Populate Summary
     displayProjectSummary();
@@ -227,7 +249,12 @@ function populateProjectData() {
 function updateProjectInfo() {
     const project = getCurrentProject();
     if (!project) return;
-
+    const collaboratorInputs = document.querySelectorAll('.collaborator-name');
+    project.generalInfo.teamMembers = Array.from(collaboratorInputs)
+        .map(input => input.value.trim())
+        .filter(name => name !== '');
+    
+    updateMeetingInvitees();
     project.generalInfo.projectName = document.getElementById('projectName').value;
     project.generalInfo.projectDescription = document.getElementById('projectDescription').value;
     project.generalInfo.projectOwner = document.getElementById('projectOwner').value;
@@ -235,8 +262,7 @@ function updateProjectInfo() {
     project.generalInfo.startDate = document.getElementById('startDate').value;
     project.generalInfo.plannedEndDate = document.getElementById('plannedEndDate').value;
     
-    const teamMembersInput = document.getElementById('teamMembers').value;
-    project.generalInfo.teamMembers = teamMembersInput.split(',').map(member => member.trim()).filter(member => member);
+    
     
     updateMeetingInvitees();
 }
@@ -564,7 +590,10 @@ function displayProjectSummary() {
         <p><strong>Project Description:</strong> ${project.generalInfo.projectDescription}</p>
         <p><strong>Project Owner:</strong> ${project.generalInfo.projectOwner}</p>
         <p><strong>Project Manager:</strong> ${project.generalInfo.projectManager}</p>
-        <p><strong>Team Members:</strong> ${project.generalInfo.teamMembers.join(', ')}</p>
+        <h4>Collaborators:</h4>
+        <ul>
+            ${project.generalInfo.teamMembers.map(member => `<li>${member}</li>`).join('')}
+        </ul>
         <p><strong>Start Date:</strong> ${project.generalInfo.startDate}</p>
         <p><strong>Planned End Date:</strong> ${project.generalInfo.plannedEndDate}</p>
 
@@ -635,11 +664,26 @@ function updateSidebar() {
     const sidebar = document.getElementById('sidebar');
     sidebar.innerHTML = `
         <button onclick="goToDashboard()">Go to Project List</button>
+        <div>
+        <div class="bg-gray-200 w-64 h-full fixed left-0 top-0 overflow-y-auto p-4">
+            <h2 class="text-xl font-bold mb-4">Projects</h2>
+            <ul id="projectList" class="mb-4">
+                ${projects.map(project => `
+                    <li class="mb-2">
+                        <a href="#" class="text-blue-600 hover:text-blue-800" onclick="loadProject(${project.id})">${project.name}</a>
+                    </li>
+                `).join('')}
+            </ul>
+            <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="showNewProjectForm()">Add Project</button>
+        </div>
+        </div>
         <button onclick="showNewProjectForm()">Add Project</button>
-        <button><a href="http://127.0.0.1:5500/stream.html">Join Stream</a></button>
+        <button><a href="stream.html">Join Stream</a></button>
+        <button><a href ="pomodoro.html"> Pomodoro</a></button>
         
 
     `;
+
 }
 
 // Function to enable project editing
@@ -760,3 +804,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateSidebar();
 });
+function addCollaboratorField() {
+    const collaboratorFields = document.getElementById('collaboratorFields');
+    const newField = document.createElement('div');
+    newField.className = 'collaborator-input';
+    newField.innerHTML = `
+        <input type="text" class="collaborator-name" placeholder="Collaborator Name">
+        <button type="button" class="remove-collaborator" onclick="removeCollaboratorField(this)">Remove</button>
+    `;
+    collaboratorFields.appendChild(newField);
+}
+
+function removeCollaboratorField(button) {
+    button.parentElement.remove();
+}

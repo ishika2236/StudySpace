@@ -48,6 +48,17 @@ let timer;
                 alert('Please enter valid values for all fields.');
             }
         }
+        function updateSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.innerHTML = `
+                <button onclick="goToDashboard()">Go to Project List</button>
+                <button onclick="showNewProjectForm()">Add Project</button>
+                <button><a href="stream.html">Join Stream</a></button>
+                <button><a href ="pomodoro.html"> Pomodoro</a></button>
+                
+        
+            `;
+        }
 
         function startStop() {
             if (isRunning) {
@@ -94,3 +105,4 @@ let timer;
         }
 
         updateDisplay();
+        updateSidebar();
