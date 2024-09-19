@@ -663,10 +663,10 @@ function saveProject() {
 function updateSidebar() {
     const sidebar = document.getElementById('sidebar');
     sidebar.innerHTML = `
-        <button onclick="goToDashboard()">Go to Project List</button>
-        <div>
+        
+
         <div class="bg-gray-200 w-64 h-full fixed left-0 top-0 overflow-y-auto p-4">
-            <h2 class="text-xl font-bold mb-4">Projects</h2>
+            <h4 class="text-xl font-bold mb-4">Projects</h4>
             <ul id="projectList" class="mb-4">
                 ${projects.map(project => `
                     <li class="mb-2">
@@ -674,9 +674,9 @@ function updateSidebar() {
                     </li>
                 `).join('')}
             </ul>
-            <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="showNewProjectForm()">Add Project</button>
+
         </div>
-        </div>
+        <button onclick="goToDashboard()">Go to Project List</button>
         <button onclick="showNewProjectForm()">Add Project</button>
         <button><a href="stream.html">Join Stream</a></button>
         <button><a href ="pomodoro.html"> Pomodoro</a></button>
@@ -802,6 +802,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
     document.getElementById('addRiskBtn').addEventListener('click', addRisk);
 
+    window.toggleSidebar = function() {
+        sidebar.classList.toggle('open');
+    }
     updateSidebar();
 });
 function addCollaboratorField() {

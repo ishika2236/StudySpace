@@ -5,166 +5,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Management Dashboard</title>
     <link rel="stylesheet" href="input.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <!-- <div class="nav-logo">Project Manager</div> -->
+    <nav id="navbar">
+        <div class="nav-logo">Project Manager</div>
+        <ul>
+            <li><a href="#projectList">Project List</a></li>
+            <li><a href="#pomodoro">Pomodoro</a></li>
+            <li><a href="#stream">Stream</a></li>
+        </ul>
+    </nav>
+    <div class="main-body">
 
-    <!-- <div class="navbar">
-        <a href="#" id="sidebar-toggle">☰</a>
-        <a href="input.html">Home</a>
-        <a href="analytics.html">Analytics</a>
-        <a href="#" id="stream-button">Stream</a>
-    </div> -->
+    <div id="sidebar-toggle">
+        <button onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+        <div id="sidebar"></div>
 
-    <div id="sidebar"></div>
-
-    <div id="main-content">
-        <div id="projectList">
-            <h2>Projects</h2>
-            <ul id="projectListItems"></ul>
-            <button onclick="showNewProjectForm()">Create New Project</button>
-        </div>
-
-        <div id="newProjectForm" style="display: none;">
-            <h2>Create New Project</h2>
-            <input type="text" id="newProjectName" placeholder="Project Name">
-            <textarea id="newProjectDescription" placeholder="Project Description"></textarea>
-            <button onclick="createNewProject()">Create</button>
-        </div>
-
-        <div id="projectDashboard" style="display: none;">
-            <h2 id="projectTitle"></h2>
-
-            <div class="progress-bar">
-                <div class="progress-bar-fill"></div>
-            </div>
-
-            <button onclick="prevPage()">Previous</button>
-            <button onclick="nextPage()">Next</button>
-            <button onclick="saveProject()" id="saveProjectBtn">Save Project</button>
-
-            <div id="generalInfo">
-                <h3>General Information</h3>
-                <input type="text" id="projectName" placeholder="Project Name">
-                <textarea id="projectDescription" placeholder="Project Description"></textarea>
-                <input type="text" id="projectOwner" placeholder="Project Owner">
-                <input type="text" id="projectManager" placeholder="Project Manager">
-                <div id="collaboratorsContainer">
-                    <h4>Collaborators</h4>
-                    <div id="collaboratorFields">
-                        <input type="text" id="teamMembers" placeholder="Team Members">
-                        <div class="collaborator-input">
-                            <input type="text" class="collaborator-name" placeholder="Collaborator Name">
-                            <button type="button" class="remove-collaborator" onclick="removeCollaboratorField(this)">Remove</button>
-                        </div>
-                    </div>
-                    <button type="button" onclick="addCollaboratorField()">Add Collaborator</button>
+        <div id="main-content">
+            <div id="projectList">
+                <div class="projectListHead">
+                    <h2>Projects</h2>
+                    <button id="project-create" onclick="showNewProjectForm()">Create New Project</button>
                 </div>
                
-                <input type="date" id="startDate">
-                <input type="date" id="plannedEndDate">
+                <ul id="projectListItems"></ul>
+                
             </div>
 
-            <div id="projectScope" style="display: none;">
-                <h3>Project Scope</h3>
-                <h4>Features</h4>
-                <div id="featuresContainer"></div>
-                <input type="text" id="newFeature" placeholder="New Feature">
-                <button onclick="addItem('features')">Add Feature</button>
-
-                <h4>Phases</h4>
-                <div id="phasesContainer"></div>
-                <input type="text" id="newPhase" placeholder="New Phase">
-                <button onclick="addItem('phases')">Add Phase</button>
-
-                <h4>Deliverables</h4>
-                <div id="deliverablesContainer"></div>
-                <input type="text" id="newDeliverable" placeholder="New Deliverable">
-                <button onclick="addItem('deliverables')">Add Deliverable</button>
+            <div id="newProjectForm" style="display: none;">
+                <h2>Create New Project</h2>
+                <input type="text" id="newProjectName" placeholder="Project Name">
+                <textarea id="newProjectDescription" placeholder="Project Description"></textarea>
+                <button onclick="createNewProject()">Create</button>
             </div>
 
-            <div id="taskList" style="display: none;">
-                <h3>Task List</h3>
-                <div id="taskListContainer"></div>
-                <h4>Add New Task</h4>
-                <input type="text" id="taskName" placeholder="Task Name">
-                <input type="text" id="taskResponsible" placeholder="Responsible Person">
-                <select id="taskImportance">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                </select>
-                <input type="date" id="taskDeadline">
-                <input type="number" id="estimatedDuration" placeholder="Estimated Duration (hours)">
-                <input type="number" id="taskBudget" placeholder="Task Budget">
-                <button onclick="addTask()">Add Task</button>
-            </div>
+            <div id="projectDashboard" style="display: none;">
+                <h2 id="projectTitle"></h2>
 
-            <div id="budgetTracking" class="hidden">
-                <h2>Budget Tracking</h2>
-                <div id="totalBudgetSection">
-                    Total Budget: $<span id="totalBudget"></span>
-                    <button onclick="showSetTotalBudgetPrompt()">Update Total Budget</button>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
                 </div>
-                <p>Budget Used: $<span id="budgetUsed"></span></p>
-                <p>Remaining Budget: $<span id="remainingBudget"></span></p>
-                <p>Cost Overruns: $<span id="costOverruns"></span></p>
-                <h3>Cost Items</h3>
-                <div id="costItems"></div>
-                <input type="text" id="costItemName" placeholder="Cost Item Name">
-                <input type="number" id="costItemAmount" placeholder="Amount">
-                <button onclick="addCostItem()">Add Cost Item</button>
-            </div>
 
-            <div id="communication" class="hidden">
-                <h2>Communication</h2>
-                <h3>Project Updates</h3>
-                <div id="updatesContainer"></div>
-                <textarea id="updateContent" placeholder="New Update"></textarea>
-                <button onclick="addUpdate()">Add Update</button>
+                
+                <div id="generalInfo">
+                    <div class="general-details">
+                        <h3>General Information</h3>
+                    <input type="text" id="projectName" placeholder="Project Name">
+                    <textarea id="projectDescription" placeholder="Project Description"></textarea>
+                    <input type="text" id="projectOwner" placeholder="Project Owner">
+                    <input type="text" id="projectManager" placeholder="Project Manager">
+                    </div>
+                    
+                    <div id="collaboratorsContainer">
+                        <h4>Collaborators</h4>
+                        <div id="collaboratorFields">
+                           
+                            <div class="collaborator-input">
+                                <input type="text" class="collaborator-name" placeholder="Collaborator Name">
+                                
+                                <button type="button" class="remove-collaborator" onclick="removeCollaboratorField(this)">Remove</button>
+                            </div>
+                            
+                        </div>
+                        <button type="button" onclick="addCollaboratorField()">Add Collaborator</button>
+                    </div>
+                    <div class="imp-dates">
+                        <div class="start-date">
+                            <label for="startDate">Project Start Date</label>
+                            <input type="date" id="startDate" placeholder="Project Start Date">
+                        </div>
+                        
+                        <div class="end-date">
+                            <label for="plannedEndDate">Project Deadline</label>
+                        <input type="date" id="plannedEndDate" placeholder="Project Deadline">
+                        </div>
+                    </div>
+                    
+                    
+                </div>
 
-                <h3>Schedule Meeting</h3>
-                <input type="text" id="meetingTitle" placeholder="Meeting Title">
-                <input type="datetime-local" id="meetingDateTime">
-                <textarea id="meetingAgenda" placeholder="Meeting Agenda"></textarea>
-                <select id="meetingInvitees" multiple>
-                    <option value="all">All</option>
-                </select>
-                <button onclick="scheduleMeeting()">Schedule Meeting</button>
+                <div id="projectScope" style="display: none;">
+                    <h3>Project Scope</h3>
+                    <h4>Features</h4>
+                    <div id="featuresContainer"></div>
+                    <input type="text" id="newFeature" placeholder="New Feature">
+                    <button onclick="addItem('features')">Add Feature</button>
 
-                <h3>Scheduled Meetings</h3>
-                <div id="meetingsContainer"></div>
-            </div>
-            <div id="riskManagement" style="display: none;">
-                <h3>Risk Management</h3>
-                <div id="riskListContainer"></div>
-                <h4>Add New Risk</h4>
-                <input type="text" id="riskName" placeholder="Risk Name">
-                <textarea id="riskDescription" placeholder="Risk Description"></textarea>
-                <select id="riskProbability">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                </select>
-                <select id="riskImpact">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                </select>
-                <textarea id="riskMitigation" placeholder="Mitigation Plan"></textarea>
-                <button id="addRiskBtn" onclick="addRisk()">Add Risk</button>
-            </div>
+                    <h4>Phases</h4>
+                    <div id="phasesContainer"></div>
+                    <input type="text" id="newPhase" placeholder="New Phase">
+                    <button onclick="addItem('phases')">Add Phase</button>
 
-            <div id="summary" class="hidden">
-                <!-- Project summary will be populated here -->
-            </div>
+                    <h4>Deliverables</h4>
+                    <div id="deliverablesContainer"></div>
+                    <input type="text" id="newDeliverable" placeholder="New Deliverable">
+                    <button onclick="addItem('deliverables')">Add Deliverable</button>
+                </div>
 
-            <div id="postSummaryActions" class="hidden">
-                <button onclick="goToDashboard()">Go to Project List</button>
+                <div id="taskList" style="display: none;">
+                    <h3>Task List</h3>
+                    <div id="taskListContainer"></div>
+                    <h4>Add New Task</h4>
+                    <input type="text" id="taskName" placeholder="Task Name">
+                    <input type="text" id="taskResponsible" placeholder="Responsible Person">
+                    <select id="taskImportance">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                    <input type="date" id="taskDeadline">
+                    <input type="number" id="estimatedDuration" placeholder="Estimated Duration (hours)">
+                    <input type="number" id="taskBudget" placeholder="Task Budget">
+                    <button onclick="addTask()">Add Task</button>
+                </div>
+
+                <div id="budgetTracking" class="hidden">
+                    <h2>Budget Tracking</h2>
+                    <div id="totalBudgetSection">
+                        Total Budget: $<span id="totalBudget"></span>
+                        <button onclick="showSetTotalBudgetPrompt()">Update Total Budget</button>
+                    </div>
+                    <p>Budget Used: $<span id="budgetUsed"></span></p>
+                    <p>Remaining Budget: $<span id="remainingBudget"></span></p>
+                    <p>Cost Overruns: $<span id="costOverruns"></span></p>
+                    <h3>Cost Items</h3>
+                    <div id="costItems"></div>
+                    <input type="text" id="costItemName" placeholder="Cost Item Name">
+                    <input type="number" id="costItemAmount" placeholder="Amount">
+                    <button onclick="addCostItem()">Add Cost Item</button>
+                </div>
+
+                <div id="communication" class="hidden">
+                    <h2>Communication</h2>
+                    <h3>Project Updates</h3>
+                    <div id="updatesContainer"></div>
+                    <textarea id="updateContent" placeholder="New Update"></textarea>
+                    <button onclick="addUpdate()">Add Update</button>
+
+                    <h3>Schedule Meeting</h3>
+                    <input type="text" id="meetingTitle" placeholder="Meeting Title">
+                    <input type="datetime-local" id="meetingDateTime">
+                    <textarea id="meetingAgenda" placeholder="Meeting Agenda"></textarea>
+                    <select id="meetingInvitees" multiple>
+                        <option value="all">All</option>
+                    </select>
+                    <button onclick="scheduleMeeting()">Schedule Meeting</button>
+
+                    <h3>Scheduled Meetings</h3>
+                    <div id="meetingsContainer"></div>
+                </div>
+                <div id="riskManagement" style="display: none;">
+                    <h3>Risk Management</h3>
+                    <div id="riskListContainer"></div>
+                    <h4>Add New Risk</h4>
+                    <input type="text" id="riskName" placeholder="Risk Name">
+                    <textarea id="riskDescription" placeholder="Risk Description"></textarea>
+                    <select id="riskProbability">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                    <select id="riskImpact">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                    <textarea id="riskMitigation" placeholder="Mitigation Plan"></textarea>
+                    <button id="addRiskBtn" onclick="addRisk()">Add Risk</button>
+                </div>
+
+                <div id="summary" class="hidden">
+                    <!-- Project summary will be populated here -->
+                </div>
+
+                <div id="postSummaryActions" class="hidden">
+                    <button onclick="goToDashboard()">Go to Project List</button>
+                </div>
+                <button onclick="prevPage()">Previous</button>
+                <button onclick="nextPage()">Next</button>
+                <button onclick="saveProject()" id="saveProjectBtn">Save Project</button>
+
             </div>
         </div>
-
-     
     </div>
 
     <script src="input.js"></script>
