@@ -203,13 +203,13 @@ input{
   margin-top: .5rem;
 }
 .general-details{
-  border: 1px solid rgb(16, 165, 219);
+  border: 1px solid rgb(16, 165, 219, .336);
   padding: 1rem;
   margin: 1rem;
 }
 #collaboratorsContainer
 {
-  border: 1px solid rgb(16, 165, 219);
+  border: 1px solid rgb(16, 165, 219, 0.336);
   padding: 1rem;
   margin: 1rem;
 }
@@ -223,7 +223,7 @@ input{
   margin-top: .5rem;
 }
 .imp-dates{
-  border: 1px solid rgb(16, 165, 219);
+  border: 1px solid rgba(16, 165, 219, 0.336);
   padding: 1rem;
   margin: 1rem;
 }

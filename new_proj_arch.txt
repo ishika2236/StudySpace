@@ -1,0 +1,52 @@
+project-management-tool/
+│
+├── index.html
+├── styles.css
+├── script.js
+│
+├── assets/
+│   ├── images/
+│   └── icons/
+│
+├── components/
+│   ├── calendar/
+│   │   └── calendar.js
+│   ├── reminders/
+│   │   └── reminders.js
+│   ├── tasks/
+│   │   ├── upcoming-tasks.js
+│   │   └── current-task.js
+│   ├── meetings/
+│   │   └── meetings.js
+│   ├── productivity/
+│   │   └── productivity-bar.js
+│   ├── projects/
+│   │   ├── add-project.js
+│   │   └── board-view.js
+│   ├── study/
+│   │   ├── notes.js
+│   │   ├── exam-deadlines.js
+│   │   ├── study-plans.js
+│   │   ├── syllabus-logging.js
+│   │   └── study-results.js
+│   └── team/
+│       ├── add-team-members.js
+│       ├── team-performance.js
+│       ├── deadline-chart.js
+│       ├── priority-tasks-chart.js
+│       └── budget-chart.js
+│
+├── data/
+│   ├── projects.json
+│   ├── tasks.json
+│   ├── meetings.json
+│   ├── reminders.json
+│   ├── notes.json
+│   ├── exam-deadlines.json
+│   ├── study-plans.json
+│   ├── syllabus.json
+│   └── team-performance.json
+│
+├── firebase-config.js
+└── utils/
+    └── storage.js

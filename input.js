@@ -166,14 +166,50 @@ function createNewProject() {
     }
 }
 
+// function loadProject(projectId) {
+//     currentProjectId = projectId;
+//     const project = getCurrentProject();
+//     document.getElementById('projectList').style.display = 'none';
+//     if (project) {
+//         document.getElementById('projectList').style.display = 'none';
+//         document.getElementById('newProjectForm').style.display = 'none';
+//         document.getElementById('projectDashboard').style.display = 'block';
+//         document.getElementById('projectTitle').textContent = project.name;
+//         populateProjectData();
+//         currentPage = 'generalInfo';
+//         pages.forEach(page => {
+//             document.getElementById(page).style.display = page === 'generalInfo' ? 'block' : 'none';
+//         });
+//         updateProgressBar();
+//         updateSidebar();
+//     }
+// }
 function loadProject(projectId) {
+    console.log("loadProject called with projectId:", projectId);
     currentProjectId = projectId;
     const project = getCurrentProject();
-    document.getElementById('projectList').style.display = 'none';
+    console.log("Current project:", project);
+
     if (project) {
-        document.getElementById('projectList').style.display = 'none';
+        console.log("Hiding project list and showing dashboard");
+        const projectListElement = document.getElementById('projectList');
+        const projectDashboardElement = document.getElementById('projectDashboard');
+
+        if (projectListElement) {
+            projectListElement.style.display = 'none';
+            console.log("Project list display set to none");
+        } else {
+            console.error("Project list element not found");
+        }
+
+        if (projectDashboardElement) {
+            projectDashboardElement.style.display = 'block';
+            console.log("Project dashboard display set to block");
+        } else {
+            console.error("Project dashboard element not found");
+        }
+
         document.getElementById('newProjectForm').style.display = 'none';
-        document.getElementById('projectDashboard').style.display = 'block';
         document.getElementById('projectTitle').textContent = project.name;
         populateProjectData();
         currentPage = 'generalInfo';
@@ -182,7 +218,20 @@ function loadProject(projectId) {
         });
         updateProgressBar();
         updateSidebar();
+    } else {
+        console.error("Project not found");
     }
+}
+function checkElementVisibility() {
+    const elements = ['projectList', 'projectDashboard', 'newProjectForm'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            console.log(`${id} visibility:`, element.style.display);
+        } else {
+            console.error(`${id} element not found`);
+        }
+    });
 }
 
 function editProject(projectId) {
