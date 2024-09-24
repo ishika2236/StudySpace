@@ -127,12 +127,12 @@
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
+        <!-- <div class="sidebar">
             <div class="sidebar-icon"></div>
             <div class="sidebar-icon"></div>
             <div class="sidebar-icon"></div>
             <div class="sidebar-icon"></div>
-        </div>
+        </div> -->
         <div class="main-content">
             <div class="dashboard-header">
                 <h1>Project Dashboard</h1>
@@ -161,7 +161,6 @@
 
         const projectForm = document.getElementById('projectForm');
         const projectList = document.getElementById('projectList');
-        const downloadJSONBtn = document.getElementById('downloadJSON');
 
         function renderProjects() {
             projectList.innerHTML = '';
@@ -209,9 +208,10 @@
         }
 
         projectForm.addEventListener('submit', addProject);
-        downloadJSONBtn.addEventListener('click', downloadJSON);
-
-        renderProjects();
+        // downloadJSONBtn.addEventListener('click', downloadJSON);
+        document.addEventListener('DomContentLoaded',function(){
+            renderProjects();
+        })
     </script>
 </body>
 </html>

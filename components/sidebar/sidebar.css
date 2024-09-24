@@ -1,0 +1,89 @@
+/* styles.css */
+:root {
+    --accent-orange: #fea700;
+    --accent-green: #30d350;
+    --accent-red: #f84d4d;
+    --accent-blue: #3578f6;
+    --bg-color: #121212;
+    --text-color: #ffffff;
+    --secondary-bg: #1e1e1e;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+  
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: var(--secondary-bg);
+    border-right: 1px solid var(--accent-blue);
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(0); /* Show sidebar by default */
+  }
+  
+  .sidebar.hidden {
+    transform: translateX(-100%); /* Hide sidebar */
+  }
+  
+  .toggle-btn {
+    display: block;
+    width: 50px;
+    height: 50px;
+    border: none;
+    background-color: var(--accent-blue);
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: -50px;
+    transition: right 0.3s ease-in-out;
+    text-align: center;
+    line-height: 50px; /* Center icon vertically */
+    color: var(--text-color);
+  }
+  
+  .toggle-btn:hover {
+    background-color: var(--accent-green);
+  }
+  
+  .icon {
+    font-size: 24px;
+  }
+  
+  .sidebar-content {
+    padding: 20px;
+  }
+  
+  .sidebar-content a {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .sidebar-content a:hover {
+    background-color: var(--accent-blue);
+  }
+  
+  .main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+  }
+  
+  .sidebar.hidden + .main-content {
+    margin-left: 0; /* Adjust margin when sidebar is hidden */
+  }
+
+  
+  /* Add any additional styling for the new routes if needed */
+  

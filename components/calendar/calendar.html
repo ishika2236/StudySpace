@@ -1,0 +1,53 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Google Calendar Clone</title>
+        <link rel="stylesheet" href="calendar.css">
+    </head>
+    <body>
+        <div class="calendar-app">
+            <div class="calendar-header">
+              <div class="view-selector">
+                <button>Daily</button>
+                <button>Weekly</button>
+                <button>Monthly</button>
+                <button>Yearly</button>
+              </div>
+              <div class="header-navigation">
+                <button class="prev-button">Previous</button>
+                <span class="header-text"></span>
+                <button class="next-button">Next</button>
+              </div>
+              <div class="header-actions">
+                <button class="create-task">Create Task</button>
+                <button class="create-meeting">Create Meeting</button>
+              </div>
+            </div>
+        
+            <div id="calendar" class="calendar">
+              <!-- Calendar content will be dynamically rendered here -->
+            </div>
+        
+            <div id="createTaskForm" class="modal">
+              <div class="modal-content">
+                <h2>Create Task</h2>
+                <form>
+                  <label for="task">Task:</label>
+                  <input type="text" id="task" name="task">
+                  <label for="taskType">Type:</label>
+                  <select id="taskType" name="taskType">
+                    <option value="task">Task</option>
+                    <option value="meeting">Meeting</option>
+                  </select>
+                  <button type="submit">Add Task</button>
+                  <button class="close">Close</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        
+        <script src="calendar.js"></script>
+    </body>
+    </html>
