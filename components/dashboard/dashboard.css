@@ -46,6 +46,7 @@ i{
 .curr-task{
     background-color: #1d1c1c;
     width: 25%;
+    height: 100%;
     text-align: center;
     border-radius: 1rem;
     margin: 1rem 1rem;
@@ -85,4 +86,71 @@ i{
 
 .task-play-btn .fa-pause {
     color: rgb(36, 233, 36);
+}
+
+.task-list{
+    width: 30%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: #1d1c1c;
+    margin: 1rem;
+
+}
+.task-list *{
+    background: #1d1c1c;
+
+}
+.task-list-heading
+{
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around; 
+    padding: .5rem;
+}
+.task-list-head-manage , .task-list-head-manage i{
+    color: rgb(25, 128, 245);
+    font-size: .85rem;
+}
+.task-list-heading h4{
+    font-size: 1.2rem;    
+}
+.dashboard-tasklist{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.db-task{
+    background-color: #2a2929;
+    /* margin: 1rem; */
+    border-radius: .85rem;
+    width: 85%;;
+    padding: .5rem;
+    margin: .3rem;
+    display: flex;
+    justify-content: space-around;
+
+}
+.db-task *{
+    background-color: #2a2929;
+}
+.task-ref a
+{
+    font-size: .85rem;
+    padding: .1rem;
+    text-decoration: none;
+    
+}
+.task-icon i{
+    border-radius: 50%;
+    background-color: orangered;
+    height: 2rem;
+    width: 2rem
+
+}
+.task-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
