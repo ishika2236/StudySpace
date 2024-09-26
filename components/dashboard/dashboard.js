@@ -10,3 +10,4 @@ const toggleButton = document.getElementById('toggle-btn');
             toggleButton.innerHTML = '<i class="fas fa-play"></i>';
         }
     });
+

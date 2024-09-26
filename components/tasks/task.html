@@ -3,41 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Manager</title>
+    <title>Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="task_board.css">
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
-            <h2>Quick Add</h2>
-            <button class="add-task" onclick="openModal()">Add Task</button>
+            <!-- Sidebar icons here -->
         </div>
         <div class="main-content">
             <div class="header">
-                <h1>Task Board</h1>
-                <div class="filters-top">
-                    <select id="filterType">
-                        <option value="none">No Filter</option>
-                        <option value="assignee">Assignee</option>
-                        <option value="priority">Priority</option>
-                        <option value="project">Project</option>
+                <h1>Dashboard</h1>
+                <div class="filters">
+                    <select id="priorityFilter">
+                        <option value="">Priority</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
                     </select>
-                    <select id="filterValue">
-                        <option value="">Select Filter</option>
+                    <select id="projectFilter">
+                        <option value="">Project</option>
+                        <!-- Project options will be populated dynamically -->
                     </select>
-                    <input type="text" id="searchInput" placeholder="Search tasks...">
+                    <button onclick="openModal()">Add Task</button>
                 </div>
             </div>
-            <div class="filters">
-                <select id="swimlaneType">
-                    <option value="none">No Swimlanes</option>
-                    <option value="assignee">By Assignee</option>
-                    <option value="priority">By Priority</option>
-                    <option value="project">By Project</option>
-                </select>
-            </div>
             <div id="board" class="board">
-                <!-- Columns will be dynamically generated here -->
+                <!-- Columns will be generated dynamically -->
             </div>
         </div>
     </div>
@@ -45,235 +39,43 @@
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Task Details</h2>
+            <h2>Add Task</h2>
             <form id="taskForm">
-                <input type="text" id="taskTitle" placeholder="Title" required>
-                <select id="taskType" required>
-                    <option value="Task">Task</option>
-                    <option value="Bug">Bug</option>
-                    <option value="Story">Story</option>
-                    <option value="Epic">Epic</option>
+                <label for="taskTitle">Title</label>
+                <input type="text" id="taskTitle" name="title" required>
+                
+                <label for="taskType">Type</label>
+                <input type="text" id="taskType" name="type">
+                
+                <label for="taskDescription">Description</label>
+                <textarea id="taskDescription" name="description"></textarea>
+                
+                <label for="taskPriority">Priority</label>
+                <select id="taskPriority" name="priority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
                 </select>
-                <textarea id="taskDescription" placeholder="Description" required></textarea>
-                <select id="taskPriority" required>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
+                
+                <label for="taskStatus">Status</label>
+                <select id="taskStatus" name="status">
+                    <option value="to-do">To Do</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="done">Done</option>
                 </select>
-                <select id="taskStatus" required>
-                    <option value="To Do">To Do</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Review">Review</option>
-                    <option value="Done">Done</option>
+                
+                <label for="taskAssignee">Assignee</label>
+                <input type="text" id="taskAssignee" name="assignee">
+                
+                <label for="taskProject">Project</label>
+                <select id="taskProject" name="project">
+                    <!-- Project options will be populated dynamically -->
                 </select>
-                <input type="text" id="taskAssignee" placeholder="Assignee">
-                <input type="text" id="taskReporter" placeholder="Reporter">
-                <input type="text" id="taskLabels" placeholder="Labels (comma-separated)">
-                <input type="date" id="taskDueDate">
-                <input type="date" id="taskDeadline" placeholder="Deadline">
-                <textarea id="taskSubtasks" placeholder="Subtasks (one per line)"></textarea>
-                <select id="taskProject" required>
-                    <option value="">Select Project</option>
-                    <!-- Project options will be dynamically populated here -->
-                </select>
+                
                 <button type="submit">Save Task</button>
             </form>
         </div>
     </div>
-
-    <script>
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        let projects = JSON.parse(localStorage.getItem('projects')) || ['Project A', 'Project B', 'Project C'];
-        const columns = ['To Do', 'In Progress', 'Review', 'Done'];
-
-        function renderBoard() {
-            const board = document.getElementById('board');
-            board.innerHTML = '';
-
-            const swimlaneType = document.getElementById('swimlaneType').value;
-            const filteredTasks = filterTasks();
-
-            if (swimlaneType === 'none') {
-                renderColumns(board, filteredTasks);
-            } else {
-                renderSwimlanes(board, filteredTasks, swimlaneType);
-            }
-        }
-
-        function renderColumns(container, tasks) {
-            columns.forEach(column => {
-                const columnElement = createColumnElement(column);
-                const columnTasks = tasks.filter(task => task.status === column);
-                columnTasks.forEach(task => {
-                    columnElement.appendChild(createTaskElement(task));
-                });
-                container.appendChild(columnElement);
-            });
-        }
-
-        function renderSwimlanes(container, tasks, swimlaneType) {
-            const swimlanes = [...new Set(tasks.map(task => task[swimlaneType]))];
-            swimlanes.forEach(swimlane => {
-                const swimlaneElement = document.createElement('div');
-                swimlaneElement.classList.add('swimlane');
-                swimlaneElement.innerHTML = `<h3>${swimlane || 'Unassigned'}</h3>`;
-                const swimlaneBoard = document.createElement('div');
-                swimlaneBoard.classList.add('board');
-                renderColumns(swimlaneBoard, tasks.filter(task => task[swimlaneType] === swimlane));
-                swimlaneElement.appendChild(swimlaneBoard);
-                container.appendChild(swimlaneElement);
-            });
-        }
-
-        function createColumnElement(column) {
-            const columnElement = document.createElement('div');
-            columnElement.classList.add('column');
-            columnElement.innerHTML = `
-                <h3>${column}</h3>
-                <button class="add-task" onclick="openModal('${column}')">Add Task</button>
-            `;
-            return columnElement;
-        }
-
-        function createTaskElement(task) {
-            const taskElement = document.createElement('div');
-            taskElement.classList.add('task', `priority-${task.priority.toLowerCase()}`);
-            taskElement.innerHTML = `
-                <h4>${task.title}</h4>
-                <p>${task.description}</p>
-                <p><strong>Priority:</strong> ${task.priority}</p>
-                <p><strong>Assignee:</strong> ${task.assignee}</p>
-                <p><strong>Due Date:</strong> ${task.dueDate}</p>
-                <p><strong>Deadline:</strong> ${task.deadline}</p>
-                <p><strong>Project:</strong> ${task.project}</p>
-                <a href="#" class="project-link" onclick="editTask(${tasks.indexOf(task)})">Edit Task</a>
-            `;
-            return taskElement;
-        }
-
-        function filterTasks() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filterType = document.getElementById('filterType').value;
-            const filterValue = document.getElementById('filterValue').value;
-
-            return tasks.filter(task => {
-                const matchesSearch = task.title.toLowerCase().includes(searchTerm) || task.description.toLowerCase().includes(searchTerm);
-                const matchesFilter = filterType === 'none' || task[filterType] === filterValue;
-                return matchesSearch && matchesFilter;
-            });
-        }
-
-        function openModal(status = 'To Do', taskIndex = -1) {
-            const task = taskIndex >= 0 ? tasks[taskIndex] : {};
-            document.getElementById('taskTitle').value = task.title || '';
-            document.getElementById('taskType').value = task.type || 'Task';
-            document.getElementById('taskDescription').value = task.description || '';
-            document.getElementById('taskPriority').value = task.priority || 'Medium';
-            document.getElementById('taskStatus').value = status;
-            document.getElementById('taskAssignee').value = task.assignee || '';
-            document.getElementById('taskReporter').value = task.reporter || '';
-            document.getElementById('taskLabels').value = task.labels || '';
-            document.getElementById('taskDueDate').value = task.dueDate || '';
-            document.getElementById('taskDeadline').value = task.deadline || '';
-            document.getElementById('taskSubtasks').value = task.subtasks || '';
-            document.getElementById('taskProject').value = task.project || '';
-            document.getElementById('taskModal').style.display = 'block';
-
-            document.getElementById('taskForm').onsubmit = function(event) {
-                event.preventDefault();
-                saveTask(taskIndex);
-            };
-        }
-
-        function closeModal() {
-            document.getElementById('taskModal').style.display = 'none';
-        }
-
-        
-        function editTask(taskIndex) {
-            openModal(tasks[taskIndex].status, taskIndex);
-        }
-
-        function populateProjects() {
-            const projectSelects = document.querySelectorAll('#taskProject');
-            projectSelects.forEach(select => {
-                select.innerHTML = '<option value="">Select Project</option>';
-                projects.forEach(project => {
-                    const option = document.createElement('option');
-                    option.value = project;
-                    option.textContent = project;
-                    select.appendChild(option);
-                });
-            });
-        }
-
-        function updateFilterValues() {
-        const filterType = document.getElementById('filterType').value;
-        const filterValueSelect = document.getElementById('filterValue');
-        filterValueSelect.innerHTML = '<option value="">Select Filter</option>';
-
-        if (filterType === 'none') {
-            filterValueSelect.disabled = true;
-        } else {
-            filterValueSelect.disabled = false;
-            const values = new Set(tasks.map(task => task[filterType]));
-            values.forEach(value => {
-                if (value) {
-                    const option = document.createElement('option');
-                    option.value = value;
-                    option.textContent = value;
-                    filterValueSelect.appendChild(option);
-                }
-            });
-        }
-    }
-
-    function saveTask(taskIndex) {
-        const newTask = {
-            title: document.getElementById('taskTitle').value,
-            type: document.getElementById('taskType').value,
-            description: document.getElementById('taskDescription').value,
-            priority: document.getElementById('taskPriority').value,
-            status: document.getElementById('taskStatus').value,
-            assignee: document.getElementById('taskAssignee').value,
-            reporter: document.getElementById('taskReporter').value,
-            labels: document.getElementById('taskLabels').value,
-            dueDate: document.getElementById('taskDueDate').value,
-            deadline: document.getElementById('taskDeadline').value,
-            subtasks: document.getElementById('taskSubtasks').value,
-            project: document.getElementById('taskProject').value
-        };
-
-        if (taskIndex >= 0) {
-            tasks[taskIndex] = newTask;
-        } else {
-            tasks.push(newTask);
-        }
-
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        updateFilterValues(); // Update filter options after saving a task
-        renderBoard();
-        closeModal();
-    }
-
-    // Event Listeners
-    document.getElementById('swimlaneType').addEventListener('change', renderBoard);
-    document.getElementById('filterType').addEventListener('change', () => {
-        updateFilterValues();
-        renderBoard();
-    });
-    document.getElementById('filterValue').addEventListener('change', renderBoard);
-    document.getElementById('searchInput').addEventListener('input', renderBoard);
-
-    // Initial setup
-    function init() {
-        populateProjects();
-        updateFilterValues(); // Populate filter options on page load
-        renderBoard();
-    }
-
-    // Call init when the page loads
-    window.addEventListener('load', init);
-    </script>
+    <script src="task.js"></script>
 </body>
 </html>

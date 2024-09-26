@@ -1,272 +1,341 @@
-// calendar.js
-
 // Get references to the necessary elements
 const calendarContainer = document.getElementById('calendar');
 const viewSelector = document.querySelector('.view-selector');
 const createTaskButton = document.querySelector('.header-actions .create-task');
-const createMeetingButton = document.querySelector('.header-actions .create-meeting');
 const createTaskForm = document.getElementById('createTaskForm');
-const createTaskInput = createTaskForm.querySelector('input[name="task"]');
-const createTaskTypeInput = createTaskForm.querySelector('select[name="taskType"]');
-const createTaskSubmitButton = createTaskForm.querySelector('button[type="submit"]');
-const createTaskCloseButton = createTaskForm.querySelector('.close');
+const taskForm = document.getElementById('taskForm');
+const taskNameInput = document.getElementById('taskName');
+const taskTypeInput = document.getElementById('taskType');
+const taskItemInput = document.getElementById('taskItem');
+const taskDateInput = document.getElementById('taskDate');
+const taskTimeInput = document.getElementById('taskTime');
+const createTaskCloseButton = document.querySelector('#createTaskForm .close');
 
 let currentView = 'monthly';
 let currentDate = new Date();
 
-// Function to change the calendar view
+// Initialize Calendar
+document.addEventListener('DOMContentLoaded', () => {
+    renderCalendar();
+});
+
+// View Selection
+viewSelector.addEventListener('click', (event) => {
+    if (event.target.tagName === 'BUTTON') {
+        changeView(event.target.textContent.toLowerCase());
+    }
+});
+
 function changeView(view) {
-  currentView = view;
-  renderCalendar();
+    currentView = view;
+    renderCalendar();
 }
 
+// Navigation Buttons
 const prevButton = document.querySelector('.prev-button');
 const nextButton = document.querySelector('.next-button');
-// const createMeetingButton = document.querySelector('.create-meeting');
 
-prevButton.addEventListener('click', () => {
-  navigate(-1);
-});
-
-nextButton.addEventListener('click', () => {
-  navigate(1);
-});
+prevButton.addEventListener('click', () => navigate(-1));
+nextButton.addEventListener('click', () => navigate(1));
 
 function navigate(offset) {
-  switch (currentView) {
-    case 'daily':
-      currentDate.setDate(currentDate.getDate() + offset);
-      break;
-    case 'weekly':
-      currentDate.setDate(currentDate.getDate() + offset * 7);
-      break;
-    case 'yearly':
-      currentDate.setFullYear(currentDate.getFullYear() + offset);
-      break;
-    default:
-      currentDate.setMonth(currentDate.getMonth() + offset);
-  }
-  renderCalendar();
-}
-// Function to render the calendar based on the current view
-function renderCalendar() {
-  calendarContainer.innerHTML = '';
-
-  switch (currentView) {
-    case 'daily':
-      renderDailyView();
-      break;
-    case 'weekly':
-      renderWeeklyView();
-      break;
-    case 'monthly':
-      renderMonthlyView();
-      break;
-    case 'yearly':
-      renderYearlyView();
-      break;
-  }
-
-  getHeaderText() ;
-}
-
-// Function to render the daily view
-function renderDailyView() {
-  // Implement the logic to render the daily view
-  for (let hour = 0; hour < 24; hour++) {
-    const timeSlot = document.createElement('div');
-    timeSlot.className = 'time-slot';
-    timeSlot.textContent = `${hour.toString().padStart(2, '0')}:00`;
-    calendarContainer.appendChild(timeSlot);
-
-    // Add tasks for the current hour
-    const tasks = getTasksForDate(currentDate, hour);
-    tasks.forEach(task => {
-      const taskElement = createTaskElement(task);
-      timeSlot.appendChild(taskElement);
-    });
-  }
-
-  updateCurrentTimeIndicator();
-}
-
-// Function to render the weekly view
-function renderWeeklyView() {
-  // Implement the logic to render the weekly view
-  const weekStart = new Date(currentDate);
-  weekStart.setDate(currentDate.getDate() - currentDate.getDay());
-
-  for (let i = 0; i < 7; i++) {
-    const dayColumn = document.createElement('div');
-    dayColumn.className = 'calendar-cell';
-    const currentDay = new Date(weekStart);
-    currentDay.setDate(weekStart.getDate() + i);
-    dayColumn.innerHTML = `<strong>${currentDay.toLocaleDateString('default', { weekday: 'short', month: 'numeric', day: 'numeric' })}</strong>`;
-    calendarContainer.appendChild(dayColumn);
-
-    const tasks = getTasksForDate(currentDay);
-    tasks.forEach(task => {
-      const taskElement = createTaskElement(task);
-      dayColumn.appendChild(taskElement);
-    });
-  }
-}
-
-// Function to render the monthly view
-function renderMonthlyView() {
-  // Implement the logic to render the monthly view
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
-
-  for (let i = 0; i < 7; i++) {
-    const dayHeader = document.createElement('div');
-    dayHeader.className = 'calendar-cell';
-    dayHeader.innerHTML = `<strong>${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i]}</strong>`;
-    calendarContainer.appendChild(dayHeader);
-  }
-
-  for (let i = 0; i < firstDay; i++) {
-    const emptyCell = document.createElement('div');
-    emptyCell.className = 'calendar-cell';
-    calendarContainer.appendChild(emptyCell);
-  }
-
-  for (let i = 1; i <= daysInMonth; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'calendar-cell';
-    cell.innerHTML = `<strong>${i}</strong>`;
-    calendarContainer.appendChild(cell);
-
-    const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
-    const tasks = getTasksForDate(cellDate);
-    tasks.forEach(task => {
-      const taskElement = createTaskElement(task);
-      cell.appendChild(taskElement);
-    });
-  }
-}
-
-// Function to render the yearly view
-function renderYearlyView() {
-  // Implement the logic to render the yearly view
-  for (let month = 0; month < 12; month++) {
-    const monthCell = document.createElement('div');
-    monthCell.className = 'yearly-month';
-    const monthDate = new Date(currentDate.getFullYear(), month, 1);
-    monthCell.textContent = monthDate.toLocaleDateString('default', { month: 'long' });
-    calendarContainer.appendChild(monthCell);
-  }
-}
-function getHeaderText() {
-  const options = { year: 'numeric', month: 'long' };
-  switch (currentView) {
-    case 'daily':
-      return `Daily View - ${currentDate.toLocaleDateString('default', { ...options, day: 'numeric' })}`;
-    case 'weekly':
-      const weekStart = new Date(currentDate);
-      weekStart.setDate(currentDate.getDate() - currentDate.getDay());
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      return `Weekly View - ${weekStart.toLocaleDateString('default', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('default', options)}`;
-    case 'monthly':
-      return `Monthly View - ${currentDate.toLocaleDateString('default', options)}`;
-    case 'yearly':
-      return `Yearly View - ${currentDate.getFullYear()}`;
-  }
-}
-// Function to handle creating a new task
-function createTask() {
-  const taskName = createTaskInput.value.trim();
-  const taskType = createTaskTypeInput.value;
-
-  if (taskName) {
-    // Save the task to local storage or your preferred data storage
-    saveTask(taskName, taskType);
-    closeModal('createTaskForm');
-    renderCalendar();
-  }
-}
-
-// Function to save a task
-function saveTask(name, type) {
-  // Implement the logic to save the task to local storage or your preferred data storage
-  const storedData = JSON.parse(localStorage.getItem('projectData')) || {};
-  if (!storedData.tasks) storedData.tasks = [];
-  storedData.tasks.push({ name, type, done: false });
-  localStorage.setItem('projectData', JSON.stringify(storedData));
-}
-
-// Function to create a task element
-function createTaskElement(task) {
-  const taskElement = document.createElement('div');
-  taskElement.className = `task task-${task.type} ${task.done ? 'done' : ''}`;
-  taskElement.textContent = task.name;
-
-  const deadline = new Date(task.deadline);
-  const deadlineSpan = document.createElement('span');
-  deadlineSpan.className = 'task-deadline';
-  deadlineSpan.textContent = ` (${deadline.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
-  taskElement.appendChild(deadlineSpan);
-
-  return taskElement;
-}
-
-// Function to get tasks for a given date (and hour if specified)
-function getTasksForDate(date, hour = null) {
-  const storedData = JSON.parse(localStorage.getItem('projectData')) || {};
-  const tasks = storedData.tasks || [];
-
-  return tasks.filter(item => {
-    const itemDate = new Date(item.deadline);
-    if (hour !== null) {
-      return itemDate.toDateString() === date.toDateString() && itemDate.getHours() === hour;
+    switch (currentView) {
+        case 'daily':
+            currentDate.setDate(currentDate.getDate() + offset);
+            break;
+        case 'weekly':
+            currentDate.setDate(currentDate.getDate() + offset * 7);
+            break;
+        case 'monthly':
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            break;
+        case 'yearly':
+            currentDate.setFullYear(currentDate.getFullYear() + offset);
+            break;
     }
-    return itemDate.toDateString() === date.toDateString();
+    renderCalendar();
+}
+
+function renderCalendar() {
+    calendarContainer.innerHTML = '';
+
+    switch (currentView) {
+        case 'daily':
+            renderDailyView();
+            break;
+        case 'weekly':
+            renderWeeklyView();
+            break;
+        case 'monthly':
+            renderMonthlyView();
+            break;
+        case 'yearly':
+            renderYearlyView();
+            break;
+    }
+
+    getHeaderText();
+}
+function renderDailyView() {
+  const today = new Date();
+  const currentHour = today.getHours();
+  const currentMinute = today.getMinutes();
+
+  const dailyContainer = document.createElement('div');
+  dailyContainer.className = 'daily-view';
+
+  // Example of creating time slots (assuming hourly slots)
+  for (let hour = 0; hour < 24; hour++) {
+      const timeSlot = document.createElement('div');
+      timeSlot.className = 'time-slot';
+      timeSlot.innerHTML = `<span>${hour}:00</span>`;
+
+      // Create a placeholder for tasks
+      const tasksContainer = document.createElement('div');
+      tasksContainer.className = 'tasks-container';
+      timeSlot.appendChild(tasksContainer);
+
+      dailyContainer.appendChild(timeSlot);
+  }
+
+  // Add the daily view to the calendar container
+  calendarContainer.appendChild(dailyContainer);
+
+  // Add the current time indicator
+  const indicator = document.createElement('div');
+  indicator.className = 'current-time-indicator';
+  dailyContainer.appendChild(indicator);
+
+  // Update the position of the current time indicator after the view is rendered
+  setTimeout(() => {
+      const timeSlots = document.querySelectorAll('.daily-view .time-slot');
+      if (timeSlots.length > 0) {
+          const slotHeight = timeSlots[0].offsetHeight; // Height of one time slot
+          const topOffset = currentHour * slotHeight + (currentMinute / 60) * slotHeight;
+          indicator.style.top = `${topOffset}px`;
+      }
+  }, 0);
+
+  // Render tasks
+  renderTasksInDailyView();
+}
+
+function renderTasksInDailyView() {
+  const tasks = getTasksForDate(new Date()); // Replace with the actual date
+  const timeSlots = document.querySelectorAll('.daily-view .time-slot');
+
+  tasks.forEach(task => {
+      const taskTime = new Date(task.date); // Assuming task.date is a Date object or ISO string
+      const taskHour = taskTime.getHours();
+      const taskMinute = taskTime.getMinutes();
+
+      // Find the time slot for the task
+      const timeSlot = timeSlots[taskHour];
+
+      if (timeSlot) {
+          const taskElement = createTaskElement(task);
+          // Set task position based on minute
+          taskElement.style.marginTop = `${(taskMinute / 60) * timeSlot.offsetHeight}px`;
+          timeSlot.querySelector('.tasks-container').appendChild(taskElement);
+      }
   });
 }
 
-// Function to update the current time indicator
-function updateCurrentTimeIndicator() {
-  if (currentView === 'daily') {
-    const now = new Date();
-    if (now.toDateString() === currentDate.toDateString()) {
-      const timeSlots = document.querySelectorAll('.time-slot');
-      timeSlots.forEach((slot, index) => {
-        if (now.getHours() === index) {
-          const indicator = document.createElement('div');
-          indicator.className = 'current-time-indicator';
-          indicator.style.top = `${(now.getMinutes() / 60) * 100}%`;
-          slot.appendChild(indicator);
-        }
-      });
+function createTaskElement(task) {
+  const taskElement = document.createElement('div');
+  taskElement.className = 'task';
+  taskElement.textContent = task.name; // Adjust according to your task object structure
+  return taskElement;
+}
+
+
+
+
+function renderWeeklyView() {
+    const weekStart = new Date(currentDate);
+    weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+
+    const weekContainer = document.createElement('div');
+    weekContainer.className = 'weekly-view';
+
+    for (let i = 0; i < 7; i++) {
+        const dayColumn = document.createElement('div');
+        dayColumn.className = 'day-column';
+        const currentDay = new Date(weekStart);
+        currentDay.setDate(weekStart.getDate() + i);
+        dayColumn.innerHTML = `<strong>${currentDay.toLocaleDateString('default', { weekday: 'short', month: 'numeric', day: 'numeric' })}</strong>`;
+        weekContainer.appendChild(dayColumn);
+
+        const tasks = getTasksForDate(currentDay);
+        tasks.forEach(task => {
+            const taskElement = createTaskElement(task);
+            dayColumn.appendChild(taskElement);
+        });
     }
-  }
+
+    calendarContainer.appendChild(weekContainer);
 }
 
-// Function to close a modal
-function closeModal(modalId) {
-  document.getElementById(modalId).style.display = 'none';
+function renderMonthlyView() {
+    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+    const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+
+    const monthContainer = document.createElement('div');
+    monthContainer.className = 'monthly-view';
+
+    // Header Row for Days
+    const headerRow = document.createElement('div');
+    headerRow.className = 'header-row';
+    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+        const headerCell = document.createElement('div');
+        headerCell.className = 'header-cell';
+        headerCell.textContent = day;
+        headerRow.appendChild(headerCell);
+    });
+    monthContainer.appendChild(headerRow);
+
+    // Empty Cells before the start of the month
+    const emptyCells = Array.from({ length: firstDay }, () => {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-cell';
+        return emptyCell;
+    });
+
+    // Days of the Month
+    const dayCells = Array.from({ length: daysInMonth }, (_, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell';
+        cell.innerHTML = `<strong>${i + 1}</strong>`;
+        const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), i + 1);
+        const tasks = getTasksForDate(cellDate);
+        tasks.forEach(task => {
+            const taskElement = createTaskElement(task);
+            cell.appendChild(taskElement);
+        });
+        return cell;
+    });
+
+    // Combine empty cells and day cells
+    const allCells = emptyCells.concat(dayCells);
+
+    allCells.forEach(cell => monthContainer.appendChild(cell));
+
+    calendarContainer.appendChild(monthContainer);
 }
 
-// Event listeners
-viewSelector.addEventListener('click', (event) => {
-  if (event.target.matches('.view-selector button')) {
-    const view = event.target.textContent.toLowerCase();
-    changeView(view);
-  }
-});
+function renderYearlyView() {
+    const yearContainer = document.createElement('div');
+    yearContainer.className = 'yearly-view';
 
+    for (let month = 0; month < 12; month++) {
+        const monthCell = document.createElement('div');
+        monthCell.className = 'yearly-month';
+        const monthDate = new Date(currentDate.getFullYear(), month, 1);
+        monthCell.textContent = monthDate.toLocaleDateString('default', { month: 'long' });
+        yearContainer.appendChild(monthCell);
+    }
+
+    calendarContainer.appendChild(yearContainer);
+}
+
+function getHeaderText() {
+    const headerTextElement = document.querySelector('.header-text');
+    const options = { year: 'numeric', month: 'long' };
+
+    let headerText;
+    switch (currentView) {
+        case 'daily':
+            headerText = ` ${currentDate.toLocaleDateString('default', { ...options, day: 'numeric' })}`;
+            break;
+        case 'weekly':
+            const weekStart = new Date(currentDate);
+            weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            headerText = ` ${weekStart.toLocaleDateString('default', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('default', { month: 'short', day: 'numeric' })}`;
+            break;
+        case 'monthly':
+            headerText = ` ${currentDate.toLocaleDateString('default', options)}`;
+            break;
+        case 'yearly':
+            headerText = ` ${currentDate.getFullYear()}`;
+            break;
+    }
+
+    headerTextElement.textContent = headerText;
+}
+
+function getTasksForDate(date, hour) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    return tasks.filter(task => {
+        const taskDate = new Date(task.dueDate);
+        if (hour !== undefined) {
+            return taskDate.toDateString() === date.toDateString() && task.time === hour;
+        }
+        return taskDate.toDateString() === date.toDateString();
+    });
+}
+
+function createTaskElement(task) {
+    const taskElement = document.createElement('div');
+    taskElement.className = 'task';
+    taskElement.textContent = `${task.title} (${task.type}): ${task.dueDate}`;
+    return taskElement;
+}
+
+// Show the form when "Create Task" button is clicked
 createTaskButton.addEventListener('click', () => {
-  createTaskForm.style.display = 'block';
+    createTaskForm.style.display = 'block';
 });
 
+// Hide the form when the "Close" button is clicked
 createTaskCloseButton.addEventListener('click', () => {
-  closeModal('createTaskForm');
+    createTaskForm.style.display = 'none';
 });
 
-createTaskForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  createTask();
+// Handle form submission
+taskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const task = {
+        title: taskNameInput.value,
+        type: taskTypeInput.value,
+        item: taskItemInput.value,
+        dueDate: taskDateInput.value,
+        time: taskTimeInput.value
+    };
+
+    // Save task to local storage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks.push(task);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    // Clear the form
+    taskNameInput.value = '';
+    taskTypeInput.value = '';
+    taskItemInput.value = '';
+    taskDateInput.value = '';
+    taskTimeInput.value = '';
+
+    // Hide the form
+    createTaskForm.style.display = 'none';
+
+    // Re-render the calendar
+    renderCalendar();
+});
+
+// Update task items based on selected type
+taskTypeInput.addEventListener('change', () => {
+    const type = taskTypeInput.value;
+    taskItemInput.innerHTML = '<option value="">Select Item</option>';
+
+    const storedData = JSON.parse(localStorage.getItem('projects')) || {};
+    const items = storedData[type] || [];
+    items.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.name;
+        option.textContent = item.name;
+        taskItemInput.appendChild(option);
+    });
 });
 
 // Initial render

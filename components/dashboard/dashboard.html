@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Dashboard</title>
+    <link rel="stylesheet" href="../sidebar/sidebar.css">
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
@@ -25,63 +26,93 @@
 
     </nav>
     <div class="dashboard-body">
-        <div class="dashboard-tasks">
-            <div class="curr-task">
-                <h4>task heading</h4>
-                <button class="task-play-btn" id="toggle-btn">
-                    <i class="fas fa-play"></i> <!-- Default to play icon -->
-                </button>
-                <div class="time-btns">
-                    <div class="time-elapsed"><p>Today</p><p>00:57:56</p></div>
-                    <div class="time-limit"><p>Limits</p><p>06:00:00</p></div>
+        <div class="dashboard-left">
+            <div class="dashboard-tasks">
+                <div class="curr-task">
+                    <h4>task heading</h4>
+                    <button class="task-play-btn" id="toggle-btn">
+                        <i class="fas fa-play"></i> <!-- Default to play icon -->
+                    </button>
+                    <div class="time-btns">
+                        <div class="time-elapsed"><p>Today</p><p>00:57:56</p></div>
+                        <div class="time-limit"><p>Limits</p><p>06:00:00</p></div>
+                    </div>
+                    
+                </div>
+                <div class="task-list">
+                    <div class="task-list-heading">
+                        <h4>Today's Tasks <span class="task-count">3</span></h4>
+                        <div class="task-list-head-manage">Manage <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+                    <div class="dashboard-tasklist">
+                        <div class="db-task">
+                            <div class="task-icon"><i class="fas fa-pause"></i></div>
+                            <div class="task-details">
+                                <div class="task-name"><h5>Color Palette Selection</h5></div>
+                                <div class="task-ref"><a href="">Over9k: Gamers App</a></div>
+                            </div>
+                            <div class="task-star"><i class="far fa-star"></i></div>
+                        </div>
+                        <div class="db-task">
+                            <div class="task-icon"><i class="fas fa-play"></i></div>
+                            <div class="task-details">
+                                <div class="task-name"><h5>Creating Landing page for...</h5></div>
+                                <div class="task-ref"><a href="">Guitar Tuner</a></div>
+                            </div>
+                            <div class="task-star"><i class="far fa-star"></i></div>
+                        </div>
+                        <div class="db-task">
+                            <div class="task-icon"><i class="fas fa-play"></i></div>
+                            <div class="task-details">
+                                <div class="task-name"><h5>Competitive & functional a...</h5></div>
+                                <div class="task-ref"><a href="">Doctor+</a></div>
+                            </div>
+                            <div class="task-star"><i class="far fa-star"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-meetings">
+                    <div class="meetings-heading">
+                        <h4>Today's meetings <span class="badge">6</span></h4>
+                        <a href="#">View all ›</a>
+                    </div>
+                    <div class="list-meetings">
+                        <div class="meetings">
+                            <div class="meet-details">
+                                <div class="meet-time">10:00</div>
+                                <div class="meet-description">Present the project and gather feedback</div>
+                            </div>
+                        </div>
+                        <div class="meetings">
+                            <div class="meet-details">
+                                <div class="meet-time">01:00</div>
+                                <div class="meet-description">Meeting with UX team</div>
+                            </div>
+                        </div>
+                        <div class="meetings">
+                            <div class="meet-details">
+                                <div class="meet-time">03:00</div>
+                                <div class="meet-description">Onboarding of the project</div>
+                            </div>
+                        </div>
+                        <div class="schedule-meeting">
+                            Schedule meeting
+                        </div>
+                    </div>
                 </div>
                 
             </div>
-            <div class="task-list">
-                <div class="task-list-heading">
-                    <h4>Today's Tasks</h4>
-                    <div class="task-list-head-manage">Manage <i class="fa-solid fa-chevron-right"></i> </div>
-                </div>
-                <div class="dashboard-tasklist">
-                    <div class="db-task">
-                        <div class="task-icon"><i class="fas fa-play"></i></div>
-                        <div class="task-details">
-                            <div class="task-name"><h5>Sample task</h5></div>
-                            <div class="task-ref"><a href="">project 1</a></div>
-                        </div>
-                    </div>
-                    <div class="db-task">
-                        <div class="task-icon"></div>
-                        <div class="task-details">
-                            <div class="task-name"><h5>Sample task</h5></div>
-                            <div class="task-ref"><a href="">project 1</a></div>
-                        </div>
-                    </div>
-                    <div class="db-task">
-                        <div class="task-icon"></div>
-                        <div class="task-details">
-                            <div class="task-name"><h5>Sample task</h5></div>
-                            <div class="task-ref"><a href="">project 1</a></div>
-                        </div>
-                    </div>
-                </div>
-             
-                
+            <div class="deploy-calendar">
+                <iframe src="../calendar/calendar.html" style="width:100%; height:500px;" frameborder="0"></iframe>
             </div>
-            <div class="curr-task">
-                <h4>task heading</h4>
-                <button class="task-play-btn" id="toggle-btn">
-                    <i class="fas fa-play"></i> <!-- Default to play icon -->
-                </button>
-                <div class="time-btns">
-                    <div class="time-elapsed"><p>Today</p><p>00:57:56</p></div>
-                    <div class="time-limit"><p>Limits</p><p>06:00:00</p></div>
-                </div>
-                
-            </div>
+
+        </div>  
+       
         </div>
-        <div class="dashboard-activity"></div>
+        <div class="dashboard-activity">hellooooo</div>
     </div>
+    
+    <script src="../sidebar/sidebar.js"></script>
     <script src="dashboard.js"></script>
 </body>
 </html>

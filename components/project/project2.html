@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Multi-Step Project Creation Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #3d3d3d;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress {
+            width: 0;
+            height: 100%;
+            background-color: #0078d4;
+            transition: width 0.3s ease;
+        }
+        input, select, textarea, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #3d3d3d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #0078d4;
+            cursor: pointer;
+        }
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .add-input {
+            background-color: #5a5a5a;
+        }
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Projects</h1>
+        <button onclick="showPopup('addProject')">Add Project</button>
+    </div>
+    <div id="projectList"></div>
+
+    <div id="addProjectPopup" class="popup">
+        <span class="close-popup" onclick="hidePopup('addProject')">&times;</span>
+        <h2>Create New Project</h2>
+        <div class="progress-bar">
+            <div class="progress" id="formProgress"></div>
+        </div>
+        <form id="projectForm">
+            <div class="form-step active" data-step="1">
+                <h3>Basic Information</h3>
+                <input type="text" id="projectName" placeholder="Project Name" required>
+                <textarea id="projectDescription" placeholder="Project Description" required></textarea>
+                <div class="form-navigation">
+                    <button type="button" onclick="nextStep(1)">Next</button>
+                </div>
+            </div>
+            <div class="form-step" data-step="2">
+                <h3>Goals and Milestones</h3>
+                <div id="goalsContainer" class="input-group">
+                    <input type="text" placeholder="Enter a goal">
+                    <button type="button" class="add-input" onclick="addInput('goalsContainer', 'goal')">Add Goal</button>
+                </div>
+                <div id="milestonesContainer" class="input-group">
+                    <input type="text" placeholder="Enter a milestone">
+                    <button type="button" class="add-input" onclick="addInput('milestonesContainer', 'milestone')">Add Milestone</button>
+                </div>
+                <div class="form-navigation">
+                    <button type="button" onclick="prevStep(2)">Previous</button>
+                    <button type="button" onclick="nextStep(2)">Next</button>
+                </div>
+            </div>
+            <div class="form-step" data-step="3">
+                <h3>Project Details</h3>
+                <select id="projectType" required>
+                    <option value="">Select Project Type</option>
+                    <option value="ai">AI</option>
+                    <option value="ml">Machine Learning</option>
+                    <option value="web">Web Development</option>
+                    <option value="web3">Web3</option>
+                    <option value="blockchain">Blockchain</option>
+                    <option value="mern">MERN Stack</option>
+                </select>
+                <div id="technologiesContainer"></div>
+                <div class="form-navigation">
+                    <button type="button" onclick="prevStep(3)">Previous</button>
+                    <button type="button" onclick="nextStep(3)">Next</button>
+                </div>
+            </div>
+            <div class="form-step" data-step="4">
+                <h3>Timeline</h3>
+                <input type="date" id="projectStartDate" required>
+                <input type="date" id="projectDeadline" required>
+                <select id="projectStatus" required>
+                    <option value="">Select Project Status</option>
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <div class="form-navigation">
+                    <button type="button" onclick="prevStep(4)">Previous</button>
+                    <button type="submit">Save Project</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Edit Project Popup -->
+    <div id="editProjectPopup" class="popup">
+        <span class="close-popup" onclick="hidePopup('editProject')">&times;</span>
+        <h2>Edit Project</h2>
+        <form id="editProjectForm">
+            <input type="text" id="editProjectName" placeholder="Project Name" required>
+            <textarea id="editProjectDescription" placeholder="Project Description" required></textarea>
+            <select id="editProjectStatus" required>
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <button type="submit">Update Project</button>
+        </form>
+    </div>
+
+    <!-- Budget Form -->
+    <div id="budgetPopup" class="popup">
+        <span class="close-popup" onclick="hidePopup('budget')">&times;</span>
+        <h2>Set Budget</h2>
+        <form id="budgetForm">
+            <input type="number" id="projectBudget" placeholder="Budget Amount" required>
+            <button type="submit">Set Budget</button>
+        </form>
+    </div>
+
+    <!-- Expense Form -->
+    <div id="expensePopup" class="popup">
+        <span class="close-popup" onclick="hidePopup('expense')">&times;</span>
+        <h2>Add Expense</h2>
+        <form id="expenseForm">
+            <input type="text" id="expenseDescription" placeholder="Expense Description" required>
+            <input type="number" id="expenseAmount" placeholder="Expense Amount" required>
+            <button type="submit">Add Expense</button>
+        </form>
+    </div>
+
+    <!-- Task Form -->
+    <div id="taskPopup" class="popup">
+        <span class="close-popup" onclick="hidePopup('task')">&times;</span>
+        <h2>Add Task</h2>
+        <form id="taskForm">
+            <input type="text" id="taskTitle" placeholder="Task Title" required>
+            <textarea id="taskDescription" placeholder="Task Description" required></textarea>
+            <select id="taskPriority" required>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+            <select id="taskStatus" required>
+                <option value="To Do">To Do</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Done">Done</option>
+            </select>
+            <input type="datetime-local" id="taskDeadline" required>
+            <button type="submit">Add Task</button>
+        </form>
+    </div>
+
+    <script>
+        let projects = JSON.parse(localStorage.getItem('projects')) || [];
+        let currentStep = 1;
+        let currentProjectIndex = null;
+        const totalSteps = 4;
+
+        function showPopup(type, index = null) {
+            currentProjectIndex = index;
+            document.getElementById(`${type}Popup`).style.display = 'block';
+            if (type === 'editProject' && index !== null) {
+                populateEditForm(index);
+            }
+            updateProgressBar();
+        }
+
+        function hidePopup(type) {
+            document.getElementById(`${type}Popup`).style.display = 'none';
+            resetForm();
+        }
+
+        function resetForm() {
+            const form = document.getElementById('projectForm');
+            if (form) {
+                form.reset();
+                document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+                document.querySelector('.form-step[data-step="1"]').classList.add('active');
+            }
+        }
+
+        function nextStep(step) {
+            if (validateStep(step)) {
+                document.querySelector(`.form-step[data-step="${step}"]`).classList.remove('active');
+                currentStep++;
+                document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+                updateProgressBar();
+            }
+        }
+
+        function prevStep(step) {
+            document.querySelector(`.form-step[data-step="${step}"]`).classList.remove('active');
+            currentStep--;
+            document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('formProgress').style.width = `${progress}%`;
+        }
+
+        function validateStep(step) {
+            // Basic validation (extend as needed)
+            const inputs = document.querySelectorAll(`.form-step[data-step="${step}"] input[required], .form-step[data-step="${step}"] select[required]`);
+            for (const input of inputs) {
+                if (!input.value) return false;
+            }
+            return true;
+        }
+
+        function addInput(containerId, type) {
+            const container = document.getElementById(containerId);
+            const inputGroup = document.createElement('div');
+            inputGroup.classList.add('input-group');
+            inputGroup.innerHTML = `
+                <input type="text" placeholder="Enter ${type}">
+                <button type="button" class="add-input" onclick="addInput('${containerId}', '${type}')">Add ${type.charAt(0).toUpperCase() + type.slice(1)}</button>
+            `;
+            container.appendChild(inputGroup);
+        }
+
+        function getInputValues(containerId) {
+            const container = document.getElementById(containerId);
+            const inputs = container.querySelectorAll('input[type="text"]');
+            return Array.from(inputs).map(input => input.value).filter(value => value.trim() !== '');
+        }
+
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const project = {
+                name: document.getElementById('projectName').value,
+                description: document.getElementById('projectDescription').value,
+                goals: getInputValues('goalsContainer'),
+                milestones: getInputValues('milestonesContainer'),
+                type: document.getElementById('projectType').value,
+                technologies: Array.from(document.querySelectorAll('#technologiesContainer input:checked'))
+                    .map(input => input.value),
+                startDate: document.getElementById('projectStartDate').value,
+                deadline: document.getElementById('projectDeadline').value,
+                status: document.getElementById('projectStatus').value,
+                tasks: [] // Initialize tasks if needed
+            };
+
+            projects.push(project);
+            localStorage.setItem('projects', JSON.stringify(projects));
+
+            hidePopup('addProject');
+            renderProjects();
+        });
+
+        function renderProjects() {
+            const projectList = document.getElementById('projectList');
+            projectList.innerHTML = projects.map((project, index) => `
+                <div class="project-card">
+                    <h3>${project.name}</h3>
+                    <p>${project.description}</p>
+                    <p>Status: ${project.status}</p>
+                    <p>Budget: $${project.budget || 0}</p>
+                    <p>Tasks: ${project.tasks ? project.tasks.length : 0}</p>
+                    <div class="project-actions">
+                        <button onclick="showPopup('editProject', ${index})">Edit</button>
+                        <button onclick="deleteProject(${index})">Delete</button>
+                        <button onclick="showPopup('budget', ${index})">Set Budget</button>
+                        <button onclick="showPopup('expense', ${index})">Add Expense</button>
+                        <button onclick="showPopup('task', ${index})">Add Task</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateEditForm(index) {
+            const project = projects[index];
+            document.getElementById('editProjectName').value = project.name;
+            document.getElementById('editProjectDescription').value = project.description;
+            document.getElementById('editProjectStatus').value = project.status;
+        }
+
+        document.getElementById('editProjectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (currentProjectIndex !== null) {
+                const project = projects[currentProjectIndex];
+                project.name = document.getElementById('editProjectName').value;
+                project.description = document.getElementById('editProjectDescription').value;
+                project.status = document.getElementById('editProjectStatus').value;
+                localStorage.setItem('projects', JSON.stringify(projects));
+                hidePopup('editProject');
+                renderProjects();
+            }
+        });
+
+        document.getElementById('budgetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (currentProjectIndex !== null) {
+                const project = projects[currentProjectIndex];
+                project.budget = parseFloat(document.getElementById('projectBudget').value);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                hidePopup('budget');
+                renderProjects();
+            }
+        });
+
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (currentProjectIndex !== null) {
+                const project = projects[currentProjectIndex];
+                if (!project.expenses) project.expenses = [];
+                project.expenses.push({
+                    description: document.getElementById('expenseDescription').value,
+                    amount: parseFloat(document.getElementById('expenseAmount').value)
+                });
+                localStorage.setItem('projects', JSON.stringify(projects));
+                hidePopup('expense');
+                renderProjects();
+            }
+        });
+
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (currentProjectIndex !== null) {
+                const project = projects[currentProjectIndex];
+                if (!project.tasks) project.tasks = [];
+                project.tasks.push({
+                    title: document.getElementById('taskTitle').value,
+                    description: document.getElementById('taskDescription').value,
+                    priority: document.getElementById('taskPriority').value,
+                    status: document.getElementById('taskStatus').value,
+                    deadline: document.getElementById('taskDeadline').value
+                });
+                localStorage.setItem('projects', JSON.stringify(projects));
+                hidePopup('task');
+                renderProjects();
+            }
+        });
+
+        function deleteProject(index) {
+            projects.splice(index, 1);
+            localStorage.setItem('projects', JSON.stringify(projects));
+            renderProjects();
+        }
+
+      
+        renderProjects();
+    </script>
+</body>
+</html>

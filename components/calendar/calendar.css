@@ -1,5 +1,5 @@
 :root {
-  --accent-orange: #fea700;
+  --accent-orange: #fea500d7;
   --accent-green: #30d350;
   --accent-red: #f84d4d;
   --accent-blue: #3578f6;
@@ -16,167 +16,287 @@ body {
   color: var(--text-color);
 }
 
-.container {
+.calendar-app {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  border: 1px solid var(--accent-orange);
 }
 
-header {
+/* Header Styles */
+.calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 20px;
+  background-color: var(--secondary-bg);
+  border-bottom: 1px solid var(--accent-orange);
 }
 
-.header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.view-selector {
-  display: flex;
-  gap: 10px;
-}
-
-button {
+.view-selector button {
   background-color: var(--accent-blue);
   color: var(--text-color);
   border: none;
-  padding: 5px 10px;
+  padding: 10px 20px;
+  margin-right: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.calendar {
-  border: 1px solid var(--accent-blue);
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(6, 1fr); /* Changed to ensure equal rows */
-  width: 100%;
-  height: 80vh;
-  box-sizing: border-box;
+.view-selector button:hover,
+.view-selector button:focus {
+  background-color: var(--accent-green);
+  outline: none;
 }
 
-.calendar-header {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background-color: var(--secondary-bg);
-  padding: 10px 0;
-  text-align: center;
-}
-
-.calendar-body {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(5, 1fr); /* Adjusted for consistent cell sizing */
-  overflow-y: auto;
-}
-
-.calendar-cell {
-  border: 1px solid var(--accent-blue);
-  padding: 10px;
-  box-sizing: border-box;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-}
-
-.calendar-cell.daily {
-  display: grid;
-  grid-template-rows: repeat(24, 1fr);
-}
-
-.calendar-cell.daily .time-slot {
-  border-top: 1px solid var(--accent-blue);
-  padding: 5px;
-  font-size: 0.8em;
-  min-height: auto;
+.header-navigation {
   display: flex;
   align-items: center;
 }
 
-.task {
-  margin: 2px 0;
-  padding: 2px 5px;
-  border-radius: 3px;
-  font-size: 0.8em;
-  cursor: pointer;
-}
-
-.task.done {
-  opacity: 0.6;
-}
-
-.task-actions {
-  display: flex;
-  gap: 5px;
-}
-
-.task-actions button {
-  background: none;
+.header-navigation button {
+  background-color: var(--accent-orange);
   border: none;
-  cursor: pointer;
   color: var(--text-color);
-  font-size: 0.8em;
+  padding: 10px;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: background-color 0.3s ease;
+}
+
+.header-navigation button:hover,
+.header-navigation button:focus {
+  background-color: var(--accent-red);
+  outline: none;
+}
+
+.header-navigation .header-text {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.header-actions button {
+  background-color: var(--accent-red);
+  color: var(--text-color);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.header-actions button:hover,
+.header-actions button:focus {
+  background-color: var(--accent-orange);
+  outline: none;
+}
+
+/* General Calendar Styles */
+#calendar {
+  background-color: var(--secondary-bg);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+/* Daily View Styles */
+.daily-view {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column layout for daily view */
+  position: relative; /* Ensure the container is positioned relative */
+}
+
+/* Daily View Styles */
+.daily-view .time-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--accent-orange);
+  padding: 10px;
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  position: relative; /* Ensure the current time indicator can be positioned absolutely within this container */
 }
 
 .current-time-indicator {
   position: absolute;
   left: 0;
-  right: 0;
-  border-top: 2px solid var(--accent-red);
+  width: 100%;
+  height: 2px;
+  background-color: var(--accent-red);
+  z-index: 1; /* Ensure it's on top of other elements */
 }
 
+.daily-view .tasks-container {
+  width: 100%;
+}
+
+.daily-view .task {
+  background-color: var(--accent-blue);
+  padding: 5px;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+/* Weekly View Styles */
+.weekly-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 columns for 7 days */
+  gap: 10px;
+}
+
+.weekly-view .calendar-cell {
+  background-color: var(--secondary-bg);
+  border: 1px solid var(--accent-orange);
+  padding: 10px;
+  text-align: center;
+}
+
+.weekly-view .calendar-cell strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.weekly-view .task {
+  background-color: var(--accent-green);
+  padding: 5px;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+/* Monthly View Styles */
+.monthly-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 columns for the days of the week */
+  gap: 1px; /* Add a small gap between cells */
+  background-color: var(--secondary-bg);
+  border: 1px solid var(--accent-orange);
+}
+
+.header-row {
+  display: contents; /* Allow header cells to participate in the grid */
+}
+
+.header-cell {
+  background-color: var(--accent-blue);
+  color: var(--text-color);
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  border: 1px solid var(--accent-orange); /* Border for visual separation */
+}
+
+.calendar-cell {
+  background-color: var(--bg-color);
+  border: 1px solid var(--accent-orange);
+  padding: 10px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.calendar-cell strong {
+  display: block; /* Ensure the date number is on a new line */
+  margin-bottom: 5px; /* Space between date and tasks */
+}
+
+/* Add some spacing to distinguish between days */
+.calendar-cell:not(.empty) {
+  position: relative;
+}
+.task {
+  background-color: var(--accent-green);
+  padding: 5px;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+/* Yearly View Styles */
+.yearly-view {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns for year view */
+  gap: 10px;
+}
+
+.yearly-view .yearly-month {
+  background-color: var(--secondary-bg);
+  padding: 20px;
+  border: 1px solid var(--accent-orange);
+  text-align: center;
+  font-size: 1.2em;
+}
+
+/* Current Time Indicator in Daily View */
+.current-time-indicator {
+  width: 100%;
+  height: 2px;
+  background-color: var(--accent-red);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Modal Styles */
 .modal {
   display: none;
   position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--secondary-bg);
+  padding: 20px;
+  border: 1px solid var(--accent-orange);
+  z-index: 1000;
 }
 
 .modal-content {
   background-color: var(--secondary-bg);
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid var(--accent-blue);
-  width: 80%;
-  max-width: 500px;
 }
 
-.modal-content input, .modal-content select, .modal-content button {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 5px;
+.modal-content h2 {
+  margin: 0;
+  color: var(--text-color);
 }
 
-.yearly-month {
-  text-align: center;
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content label {
+  color: var(--text-color);
+  margin-top: 10px;
+}
+
+.modal-content input,
+.modal-content select {
   padding: 10px;
-  border: 1px solid var(--accent-blue);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin-top: 5px;
 }
 
-.task-task {
-  background-color: var(--accent-blue);
-}
-
-.task-meeting {
+.modal-content button[type="submit"] {
+  margin-top: 20px;
+  padding: 10px;
   background-color: var(--accent-green);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.calendar-title {
-  text-align: center;
-  margin-bottom: 20px;
+.modal-content button[type="submit"]:hover,
+.modal-content button[type="submit"]:focus {
+  background-color: var(--accent-blue);
+  outline: none;
 }
 
-.header-text {
-  font-weight: bold;
-  font-size: 1.2em;
+.modal-content button.close {
+  background-color: var(--accent-red);
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button.close:hover,
+.modal-content button.close:focus {
+  background-color: var(--accent-orange);
+  outline: none;
 }
