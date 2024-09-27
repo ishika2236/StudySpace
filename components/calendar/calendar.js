@@ -341,12 +341,8 @@ function createTaskElement(task) {
     taskElement.className = `task priority-${task.priority}`;
     taskElement.innerHTML = `
         <span>${task.title}</span>
-        <button class="delete-task" data-id="${task.id}">Delete</button>
     `;
-    taskElement.querySelector('.delete-task').addEventListener('click', (e) => {
-        e.stopPropagation();
-        deleteTask(task.id);
-    });
+    
     return taskElement;
 }
 

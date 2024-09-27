@@ -60,6 +60,7 @@ body {
     border-radius: 20px;
     padding: 20px;
     position: relative;
+    max-height: fit-content;
 }
 .projects-card {
     grid-column: span 2;
