@@ -26,6 +26,7 @@ body {
   top: 0;
   left: 0;
   transition: transform 0.3s ease-in-out;
+  z-index: 999;
   transform: translateX(0); /* Show sidebar by default */
 }
 

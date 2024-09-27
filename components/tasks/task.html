@@ -7,12 +7,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="task_board.css">
+    <link rel="stylesheet" href="../sidebar/sidebar.css">
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <!-- Sidebar icons here -->
-        </div>
         <div class="main-content">
             <div class="header">
                 <h1>Dashboard</h1>
@@ -63,9 +61,11 @@
                     <option value="in-progress">In Progress</option>
                     <option value="done">Done</option>
                 </select>
-                
-                <label for="taskAssignee">Assignee</label>
-                <input type="text" id="taskAssignee" name="assignee">
+                <label for="taskDueDate">Due Date</label>
+                <input type="date" id="taskDueDate" name="dueDate">
+
+                <label for="taskTime">Time</label>
+                <input type="time" id="taskTime" name="time">
                 
                 <label for="taskProject">Project</label>
                 <select id="taskProject" name="project">
@@ -77,5 +77,6 @@
         </div>
     </div>
     <script src="task.js"></script>
+    <!-- <script src="../sidebar/sidebar.js"></script> -->
 </body>
 </html>

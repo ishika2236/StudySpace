@@ -265,21 +265,22 @@ function getHeaderText() {
     headerTextElement.textContent = headerText;
 }
 
-function getTasksForDate(date, hour) {
+
+function getTasksForDate(date) {
     const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     return tasks.filter(task => {
         const taskDate = new Date(task.dueDate);
-        if (hour !== undefined) {
-            return taskDate.toDateString() === date.toDateString() && task.time === hour;
-        }
         return taskDate.toDateString() === date.toDateString();
     });
 }
 
 function createTaskElement(task) {
     const taskElement = document.createElement('div');
-    taskElement.className = 'task';
-    taskElement.textContent = `${task.title} (${task.type}): ${task.dueDate}`;
+    taskElement.className = `task priority-${task.priority}`;
+    taskElement.innerHTML = `
+        <span>${task.title}</span>
+        <span>${task.time}</span>
+    `;
     return taskElement;
 }
 
@@ -297,11 +298,18 @@ createTaskCloseButton.addEventListener('click', () => {
 taskForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const task = {
+        id: Date.now().toString(),
         title: taskNameInput.value,
         type: taskTypeInput.value,
         item: taskItemInput.value,
         dueDate: taskDateInput.value,
-        time: taskTimeInput.value
+        time: taskTimeInput.value,
+        description: document.getElementById('taskDescription').value,
+        priority: document.getElementById('taskPriority').value,
+        status: 'To Do',
+        assignee: document.getElementById('taskAssignee').value,
+        project: document.getElementById('taskProject').value,
+        reminder: document.getElementById('taskReminder').checked
     };
 
     // Save task to local storage
@@ -310,11 +318,7 @@ taskForm.addEventListener('submit', (event) => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 
     // Clear the form
-    taskNameInput.value = '';
-    taskTypeInput.value = '';
-    taskItemInput.value = '';
-    taskDateInput.value = '';
-    taskTimeInput.value = '';
+    taskForm.reset();
 
     // Hide the form
     createTaskForm.style.display = 'none';
@@ -322,6 +326,29 @@ taskForm.addEventListener('submit', (event) => {
     // Re-render the calendar
     renderCalendar();
 });
+
+// Add delete functionality
+function deleteTask(taskId) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks = tasks.filter(task => task.id !== taskId);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderCalendar();
+}
+
+// Modify createTaskElement function
+function createTaskElement(task) {
+    const taskElement = document.createElement('div');
+    taskElement.className = `task priority-${task.priority}`;
+    taskElement.innerHTML = `
+        <span>${task.title}</span>
+        <button class="delete-task" data-id="${task.id}">Delete</button>
+    `;
+    taskElement.querySelector('.delete-task').addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteTask(task.id);
+    });
+    return taskElement;
+}
 
 // Update task items based on selected type
 taskTypeInput.addEventListener('change', () => {

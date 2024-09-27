@@ -36,13 +36,7 @@ i{
     margin-left: 2rem;
     padding-top: 7px;
 }
-.dashboard-tasks{
-    margin: 1rem;
-    height: 20rem;
-    /* width: 60vw; */
-    display: flex;
-    justify-content: center;
-}
+
 .curr-task{
     background-color: #1d1c1c;
     width: 30%;
@@ -329,4 +323,221 @@ i{
     font-size: 24px;
     margin-right: 5px;
     /* border: 1px solid #3478f6; */
+}
+.card {
+    background-color: #1c1c1e;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+.percentage {
+    color: #4cd964;
+    font-size: 14px;
+}
+.activity-percentage {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.activity-bars {
+    display: flex;
+    justify-content: space-between;
+}
+.activity-bar {
+    width: 18%;
+    height: 100px;
+    background-color: #2c2c2e;
+    border-radius: 5px;
+    position: relative;
+}
+.activity-bar-fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #515154;
+    border-radius: 5px;
+}
+.activity-bar-label {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #8e8e93;
+}
+.projects-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #ff3b30 0deg 65deg,
+        #4cd964 65deg 151deg,
+        #ff9500 151deg 216deg,
+        #007aff 216deg 360deg
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px;
+}
+.projects-inner {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #1c1c1e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+.project-list {
+    list-style-type: none;
+    padding: 0;
+}
+.project-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.project-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.projects-legend {
+    flex-grow: 1;
+    margin-left: 20px;
+}
+
+#project-breakdown {
+    list-style-type: none;
+    padding: 0;
+}
+
+#project-breakdown li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.project-name {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.project-progress-bar {
+    width: 100px;
+    height: 8px;
+    background-color: #3d3d3d;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.project-progress-bar .progress {
+    height: 100%;
+    background-color: #0078d4;
+}
+
+.project-progress-percentage {
+    width: 40px;
+    text-align: right;
+    margin-left: 10px;
+}
+.reminder {
+    background-color: #2c2c2e;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+.reminder-time {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.reminder-text {
+    color: #8e8e93;
+}
+.reminder-priority {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.add-reminder {
+    background-color: #2c2c2e;
+    border: none;
+    color: #0a84ff;
+    padding: 15px;
+    width: 100%;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.dashboard-body {
+    display: flex;
+    padding: 1rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.dashboard-left {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.dashboard-tasks {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.curr-task, .task-list {
+    width: 48%;
+}
+
+.dashboard-activity {
+    width: 30%;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-left, .dashboard-activity {
+        width: 100%;
+    }
+}
+.dashboard-left {
+    display: flex;
+    gap: 20px;
+}
+.dashboard-tasks, .task-list {
+    flex: 1;
+}
+.item-due {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.item-due h5 {
+    margin: 0;
+    color: #333;
+}
+.item-due p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 0.9em;
 }

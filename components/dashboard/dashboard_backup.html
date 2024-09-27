@@ -3,319 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Management Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Dashboard</title>
+
     <style>
-        :root {
-            --bg-primary: #171717;
-            --bg-secondary: #1e1e1e;
-            --bg-tertiary: #252525;
-            --text-primary: #ffffff;
-            --text-secondary: #8b8b8b;
-            --accent-blue: #3a7bd5;
-            --accent-red: #ff5f57;
-            --accent-orange: #ffbd2e;
-            --accent-green: #28c840;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
+            background-color: #1a1a1a;
+            color: #ffffff;
         }
-        .dashboard {
-            display: grid;
-            grid-template-columns: 60px 1fr;
-            height: 100vh;
+        .dashboard-body {
+            display: flex;
+            padding: 1rem;
         }
-        .sidebar {
-            background-color: var(--bg-secondary);
-            padding: 20px 0;
+        .dashboard-left {
+            width: 70%;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
-        .sidebar-icon {
-            width: 30px;
-            height: 30px;
-            background-color: var(--accent-blue);
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .dashboard-tasks {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
         }
-        .main-content {
-            padding: 20px;
-            overflow-y: auto;
+        .curr-task {
+            background-color: #292929;
+            border-radius: 15px;
+            padding: 1rem;
+            width: 48%;
         }
-        .header {
+        .task-list {
+            background-color: #292929;
+            border-radius: 15px;
+            padding: 1rem;
+            width: 48%;
+        }
+        .task-list-heading {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
-        .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--accent-green);
-            margin-left: 10px;
-        }
-        .widget-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        .widget {
-            background-color: var(--bg-secondary);
+        .db-task {
+            background-color: #353535;
             border-radius: 10px;
-            padding: 20px;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
         }
-        .widget-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 15px;
+        .task-icon {
+            margin-right: 1rem;
+        }
+        .task-details {
+            flex-grow: 1;
+        }
+        .task-actions {
+            display: flex;
+        }
+        .task-play-btn, .task-complete-btn {
+            background: none;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        .dashboard-meetings {
+            background-color: #292929;
+            border-radius: 15px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .meetings-heading {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 1rem;
         }
-        .widget-title span {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        .timer-widget {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .timer-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: var(--accent-red);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .timer-circle::before {
-            content: "II";
-            font-size: 36px;
-            color: var(--text-primary);
-        }
-        .timer-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .timer-time {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .task-list, .meeting-list {
-            list-style-type: none;
-        }
-        .task-list li, .meeting-list li {
-            background-color: var(--bg-tertiary);
-            margin-bottom: 10px;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-        }
-        .task-list .task-name {
-            display: flex;
-            align-items: center;
-        }
-        .task-list .priority {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            margin-right: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .priority.high { background-color: var(--accent-red); }
-        .priority.medium { background-color: var(--accent-orange); }
-        .priority.low { background-color: var(--accent-green); }
-        .priority::before {
-            content: "▶";
-            color: var(--bg-tertiary);
-            font-size: 10px;
-        }
-        .task-project {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .meeting-list .meeting-time {
-            background-color: var(--bg-secondary);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        .activity-widget {
-            grid-column: span 2;
-        }
-        .activity-chart {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 100px;
-        }
-        .activity-bar {
-            width: 18%;
-            background-color: var(--accent-green);
-            border-radius: 4px 4px 0 0;
-        }
-        .projects-widget {
-            grid-column: span 3;
-        }
-        .project-grid {
+        .list-meetings {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
-        .project-item {
-            background-color: var(--bg-tertiary);
-            padding: 15px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .project-item.medium { border-left: 4px solid var(--accent-orange); }
-        .project-item.high { border-left: 4px solid var(--accent-red); }
-        .project-item.low { border-left: 4px solid var(--accent-green); }
-        .project-time {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
-        .project-users {
-            display: flex;
-            margin-top: 10px;
-        }
-        .project-user {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: var(--accent-blue);
-            margin-right: -8px;
-            border: 2px solid var(--bg-tertiary);
+        .meetings {
+            background-color: #353535;
+            border-radius: 10px;
+            padding: 1rem;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <aside class="sidebar">
-            <div class="sidebar-icon"></div>
-            <div class="sidebar-icon"></div>
-            <div class="sidebar-icon"></div>
-            <div class="sidebar-icon"></div>
-            <div class="sidebar-icon"></div>
-        </aside>
-        <main class="main-content">
-            <header class="header">
-                <h1>Dashboard</h1>
-                <div class="user-info">
-                    <span>Wed Mar 20 10:28 AM</span>
-                    <div class="user-avatar"></div>
-                </div>
-            </header>
-            <div class="widget-container">
-                <div class="widget timer-widget">
-                    <h3 class="widget-title">Color Palette Selection <span>Over9k: Gamers App</span></h3>
-                    <div class="timer-circle"></div>
-                    <div class="timer-label">Today</div>
-                    <div class="timer-time">00:57:56</div>
-                    <div class="timer-label">Limits: 06:00:00</div>
-                </div>
-                <div class="widget">
-                    <h3 class="widget-title">Today's tasks <span>3</span></h3>
-                    <ul class="task-list">
-                        <li>
-                            <div class="task-name"><span class="priority high"></span>Color Palette Selection</div>
-                            <div class="task-project">Over9k: Gamers App</div>
-                        </li>
-                        <li>
-                            <div class="task-name"><span class="priority medium"></span>Creating Landing page for...</div>
-                            <div class="task-project">Guitar Tuner</div>
-                        </li>
-                        <li>
-                            <div class="task-name"><span class="priority low"></span>Competitive & functional a...</div>
-                            <div class="task-project">Doctor+</div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="widget">
-                    <h3 class="widget-title">Today's meetings <span>3</span></h3>
-                    <ul class="meeting-list">
-                        <li>
-                            <span>Present the project and gather feedback</span>
-                            <span class="meeting-time">10:00 AM</span>
-                        </li>
-                        <li>
-                            <span>Meeting with UX team</span>
-                            <span class="meeting-time">01:00 PM</span>
-                        </li>
-                        <li>
-                            <span>Onboarding of the project</span>
-                            <span class="meeting-time">03:00 PM</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="widget activity-widget">
-                    <h3 class="widget-title">Activity <span>+12%</span></h3>
-                    <div class="activity-chart">
-                        <div class="activity-bar" style="height: 92%;"></div>
-                        <div class="activity-bar" style="height: 41%;"></div>
-                        <div class="activity-bar" style="height: 78%;"></div>
-                        <div class="activity-bar" style="height: 0%;"></div>
-                        <div class="activity-bar" style="height: 0%;"></div>
+    <div class="dashboard-body">
+        <div class="dashboard-left">
+            <div class="dashboard-tasks">
+                <div class="curr-task">
+                    <h4 id="current-task-heading">No task running</h4>
+                    <p id="current-task-project"></p>
+                    <button class="task-play-btn" id="toggle-btn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="time-btns">
+                        <div class="time-elapsed"><p>Today</p><p id="time-elapsed">00:00:00</p></div>
+                        <div class="time-limit"><p>Limits</p><p id="time-limit">00:00:00</p></div>
                     </div>
                 </div>
-                <div class="widget">
-                    <h3 class="widget-title">Projects worked <span>-5%</span></h3>
-                    <!-- Add project chart here -->
-                </div>
-                <div class="widget projects-widget">
-                    <h3 class="widget-title">Projects</h3>
-                    <div class="project-grid">
-                        <div class="project-item medium">
-                            <div>Color Palette Selection</div>
-                            <div class="project-time">01:24</div>
-                            <div class="project-users">
-                                <div class="project-user"></div>
-                                <div class="project-user"></div>
-                                <div class="project-user"></div>
-                            </div>
-                        </div>
-                        <div class="project-item high">
-                            <div>User Interface (UI) Design</div>
-                            <div class="project-time">Brake time</div>
-                            <div class="project-users">
-                                <div class="project-user"></div>
-                                <div class="project-user"></div>
-                            </div>
-                        </div>
-                        <div class="project-item low">
-                            <div>Conduct User Testing</div>
-                            <div class="project-time">01:24</div>
-                            <div class="project-users">
-                                <div class="project-user"></div>
-                                <div class="project-user"></div>
-                            </div>
-                        </div>
+                <div class="task-list">
+                    <div class="task-list-heading">
+                        <h4>Today's Tasks <span class="task-count" id="task-count">0</span></h4>
+                        <div class="task-list-head-manage">Manage <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+                    <div class="dashboard-tasklist" id="task-list-container">
+                        <!-- Tasks will be populated here dynamically -->
                     </div>
                 </div>
             </div>
-        </main>
+            <div class="dashboard-meetings">
+                <div class="meetings-heading">
+                    <h4>Today's meetings</h4>
+                    <a href="#">View all</a>
+                </div>
+                <div class="list-meetings">
+                    <!-- Meetings will be populated here dynamically -->
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            let assignments = JSON.parse(localStorage.getItem('assignments')) || [];
+            let exams = JSON.parse(localStorage.getItem('exams')) || [];
+            let currentlyPlayingTask = null;
+            let timer = null;
+           
+            function updateTaskList() {
+                const taskListContainer = document.getElementById('task-list-container');
+                taskListContainer.innerHTML = '';
+                const sortedTasks = tasks
+                    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                    .slice(0, 4);
+                
+                sortedTasks.forEach((task) => {
+                    const taskElement = document.createElement('div');
+                    taskElement.className = 'db-task';
+                    taskElement.innerHTML = `
+                        <div class="task-icon"><i class="fas fa-${task.status === 'active' ? 'play' : 'pause'}"></i></div>
+                        <div class="task-details">
+                            <div class="task-name"><h5>${task.title}</h5></div>
+                            <div class="task-ref"><a href="">${task.project}</a></div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="task-play-btn" data-task-id="${task.id}"><i class="fas fa-play"></i></button>
+                            <button class="task-complete-btn" data-task-id="${task.id}"><i class="fas fa-check"></i></button>
+                        </div>
+                    `;
+                    taskListContainer.appendChild(taskElement);
+                });
+                
+                document.getElementById('task-count').textContent = tasks.length;
+
+                document.querySelectorAll('.task-play-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const taskId = parseInt(this.getAttribute('data-task-id'));
+                        startTask(taskId);
+                    });
+                });
+
+                document.querySelectorAll('.task-complete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const taskId = parseInt(this.getAttribute('data-task-id'));
+                        completeTask(taskId);
+                    });
+                });
+            }
+
+            function startTask(taskId) {
+                if (currentlyPlayingTask) {
+                    pauseTask();
+                }
+                currentlyPlayingTask = tasks.find(task => task.id === taskId);
+                if (currentlyPlayingTask) {
+                    currentlyPlayingTask.status = 'active';
+                    localStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
+                    document.getElementById('current-task-heading').textContent = currentlyPlayingTask.title;
+                    document.getElementById('current-task-project').textContent = currentlyPlayingTask.project;
+                    document.getElementById('toggle-btn').innerHTML = '<i class="fas fa-pause"></i>';
+                    startTimer();
+                }
+                updateTaskList();
+            }
+
+            function pauseTask() {
+                if (currentlyPlayingTask) {
+                    currentlyPlayingTask.status = 'inactive';
+                    localStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
+                    stopTimer();
+                    document.getElementById('toggle-btn').innerHTML = '<i class="fas fa-play"></i>';
+                }
+            }
+
+            function completeTask(taskId) {
+                const taskIndex = tasks.findIndex(task => task.id === taskId);
+                if (taskIndex !== -1) {
+                    tasks.splice(taskIndex, 1);
+                    if (currentlyPlayingTask && currentlyPlayingTask.id === taskId) {
+                        pauseTask();
+                        currentlyPlayingTask = null;
+                        document.getElementById('current-task-heading').textContent = 'No task running';
+                        document.getElementById('current-task-project').textContent = '';
+                    }
+                    updateTaskList();
+                }
+            }
+
+            function startTimer() {
+                if (!currentlyPlayingTask.startTime) {
+                    currentlyPlayingTask.startTime = new Date().getTime();
+                }
+                timer = setInterval(updateTimer, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timer);
+                if (currentlyPlayingTask) {
+                    currentlyPlayingTask.elapsedTime = (currentlyPlayingTask.elapsedTime || 0) + 
+                        (new Date().getTime() - currentlyPlayingTask.startTime);
+                    currentlyPlayingTask.startTime = null;
+                }
+            }
+
+            function updateTimer() {
+                if (currentlyPlayingTask) {
+                    const elapsedTime = (currentlyPlayingTask.elapsedTime || 0) + 
+                        (new Date().getTime() - currentlyPlayingTask.startTime);
+                    const hours = Math.floor(elapsedTime / 3600000);
+                    const minutes = Math.floor((elapsedTime % 3600000) / 60000);
+                    const seconds = Math.floor((elapsedTime % 60000) / 1000);
+                    document.getElementById('time-elapsed').textContent = 
+                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            document.getElementById('toggle-btn').addEventListener('click', function() {
+                if (currentlyPlayingTask) {
+                    if (this.querySelector('i').classList.contains('fa-pause')) {
+                        pauseTask();
+                    } else {
+                        startTimer();
+                        this.innerHTML = '<i class="fas fa-pause"></i>';
+                    }
+                }
+            });
+
+            updateTaskList();
+        });
+    </script>
 </body>
-</html> 
+</html>

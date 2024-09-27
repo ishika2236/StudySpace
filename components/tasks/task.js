@@ -36,9 +36,19 @@ function createTaskElement(task) {
         <h3>${task.title}</h3>
         <p>${task.description}</p>
         <p>Project: ${task.project}</p>
-        <p>Assignee: ${task.assignee}</p>
+        <p>Due: ${task.dueDate} ${task.time}</p> <!-- Display deadline -->
+        <button class="delete-task" data-id="${task.id}">Delete</button>
     `;
+    taskElement.querySelector('.delete-task').addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteTask(task.id);
+    });
     return taskElement;
+}
+function deleteTask(taskId) {
+    tasks = tasks.filter(task => task.id !== taskId);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderBoard();
 }
 
 function setupDragAndDrop() {
@@ -108,9 +118,11 @@ document.getElementById('taskForm').addEventListener('submit', (e) => {
         type: formData.get('type'),
         description: formData.get('description'),
         priority: formData.get('priority'),
-        status: formData.get('status') || 'To Do', // Default to 'To Do'
-        assignee: formData.get('assignee'),
-        project: formData.get('project')
+        status: formData.get('status') || 'to-do',
+        // assignee: formData.get('assignee'),
+        project: formData.get('project'),
+        dueDate: formData.get('dueDate'),  // Capture the due date
+        time: formData.get('time'),        // Capture the time
     };
     tasks.push(newTask);
     localStorage.setItem('tasks', JSON.stringify(tasks));
