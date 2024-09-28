@@ -188,3 +188,19 @@ populateProjectOptions();
 // Add event listeners for filters
 document.getElementById('priorityFilter').addEventListener('change', applyFilters);
 document.getElementById('projectFilter').addEventListener('change', applyFilters);
+function loadSidebar() {
+    fetch('../sidebar/sidebar.html')
+      .then(response => response.text())
+      .then(data => {
+  
+        document.body.innerHTML = data + document.body.innerHTML;
+      })
+      .catch(error => console.error('Error loading sidebar:', error));
+  }
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-right-body');
+
+    sidebar.classList.toggle('hidden');
+    mainContent.classList.toggle('expanded');
+}

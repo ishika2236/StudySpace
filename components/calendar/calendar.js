@@ -363,3 +363,20 @@ taskTypeInput.addEventListener('change', () => {
 
 // Initial render
 renderCalendar();
+
+function loadSidebar() {
+    fetch('../sidebar/sidebar.html')
+      .then(response => response.text())
+      .then(data => {
+  
+        document.body.innerHTML = data + document.body.innerHTML;
+      })
+      .catch(error => console.error('Error loading sidebar:', error));
+  }
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-right-body');
+
+    sidebar.classList.toggle('hidden');
+    mainContent.classList.toggle('expanded');
+}

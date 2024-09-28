@@ -5,69 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Calendar Clone</title>
     <link rel="stylesheet" href="calendar.css">
-    <link rel="stylesheet" href="../sidebar/sidebar.css">
 </head>
 <body>
-    <div class="calendar-app">
-        <div class="calendar-header">
-            <div class="view-selector">
-                <button>Daily</button>
-                <button>Weekly</button>
-                <button>Monthly</button>
-                <button>Yearly</button>
+    <div class="main-calendar-body">
+        <div class="sidebar" id="sidebar">
+            <button class="toggle-btn" onclick="toggleSidebar()">
+              <span class="icon">&#9776;</span> <!-- Hamburger menu icon -->
+            </button>
+            <div class="sidebar-content">
+              <a href="../../index.html" onclick="loadContent('dashboard')">Dashboard</a>
+              <a href="../../interface/interface2.html" onclick="loadContent('project')">Tracks</a>
+              <a href="../tasks/task.html" onclick="loadContent('tasks')">Tasks</a>
+              <a href="./calendar.html" onclick="loadContent('calendar')">Calendar</a>
             </div>
-            <div class="header-navigation">
-                <button class="prev-button">Previous</button>
-                <span class="header-text"></span>
-                <button class="next-button">Next</button>
+          </div>
+          <div class="calendar-app">
+
+            <div class="calendar-header">
+                <div class="view-selector">
+                    <button>Daily</button>
+                    <button>Weekly</button>
+                    <button>Monthly</button>
+                    <button>Yearly</button>
+                </div>
+                <div class="header-navigation">
+                    <button class="prev-button">Previous</button>
+                    <span class="header-text"></span>
+                    <button class="next-button">Next</button>
+                </div>
+                <div class="header-actions">
+                    <button class="create-task">Create Task</button>
+                    <!-- <button class="create-meeting">Create Meeting</button> -->
+                </div>
             </div>
-            <div class="header-actions">
-                <button class="create-task">Create Task</button>
-                <!-- <button class="create-meeting">Create Meeting</button> -->
+    
+            <div id="calendar" class="calendar">
+                <!-- Calendar content will be dynamically rendered here -->
             </div>
+    
+            <div id="createTaskForm" class="modal">
+                <div class="modal-content">
+                    <h2>Create Task</h2>
+                    <form id="taskForm">
+                        <input type="text" id="taskName" placeholder="Task Name" required>
+                        <select id="taskType" required>
+                            <option value="">Select Type</option>
+                            <option value="Project">Project</option>
+                            <option value="Assignment">Assignment</option>
+                            <option value="Exam">Exam</option>
+                            <option value="Course">Course</option>
+                        </select>
+                        <select id="taskItem" >
+                            <option value="">Select Item</option>
+                        </select>
+                        <input type="date" id="taskDate" required>
+                        <input type="time" id="taskTime" required>
+                        <textarea id="taskDescription" placeholder="Description"></textarea>
+                        <select id="taskPriority" required>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                        <input type="text" id="taskAssignee" placeholder="Assignee">
+                        <select id="taskProject" >
+                            <option value="">Select Project</option>
+                        </select>
+                        <label>
+                            <input type="checkbox" id="taskReminder">
+                            Set Reminder
+                        </label>
+                        <button type="submit">Add Task</button>
+                        <button type="button" class="close">Close</button>
+                    </form>
+                </div>
+            </div>        
         </div>
 
-        <div id="calendar" class="calendar">
-            <!-- Calendar content will be dynamically rendered here -->
-        </div>
-
-        <div id="createTaskForm" class="modal">
-            <div class="modal-content">
-                <h2>Create Task</h2>
-                <form id="taskForm">
-                    <input type="text" id="taskName" placeholder="Task Name" required>
-                    <select id="taskType" required>
-                        <option value="">Select Type</option>
-                        <option value="Project">Project</option>
-                        <option value="Assignment">Assignment</option>
-                        <option value="Exam">Exam</option>
-                        <option value="Course">Course</option>
-                    </select>
-                    <select id="taskItem" >
-                        <option value="">Select Item</option>
-                    </select>
-                    <input type="date" id="taskDate" required>
-                    <input type="time" id="taskTime" required>
-                    <textarea id="taskDescription" placeholder="Description"></textarea>
-                    <select id="taskPriority" required>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                    <input type="text" id="taskAssignee" placeholder="Assignee">
-                    <select id="taskProject" >
-                        <option value="">Select Project</option>
-                    </select>
-                    <label>
-                        <input type="checkbox" id="taskReminder">
-                        Set Reminder
-                    </label>
-                    <button type="submit">Add Task</button>
-                    <button type="button" class="close">Close</button>
-                </form>
-            </div>
-        </div>        
     </div>
+    
 
     <script src="calendar.js"></script>
     <!-- <script src="../sidebar/sidebar.js"></script> -->

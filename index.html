@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="./components/dashboard/dashboard.css">
 </head>
 <body>
     <div class="main-dashboard-layout">
@@ -14,10 +14,10 @@
               <span class="icon">&#9776;</span> <!-- Hamburger menu icon -->
             </button>
             <div class="sidebar-content">
-              <a href="dashboard.html" onclick="loadContent('dashboard')">Dashboard</a>
-              <a href="../../interface/interface2.html" onclick="loadContent('project')">Tracks</a>
-              <a href="../tasks/task.html" onclick="loadContent('tasks')">Tasks</a>
-              <a href="../calendar/calendar.html" onclick="loadContent('calendar')">Calendar</a>
+              <a href="./index.html" onclick="loadContent('dashboard')">Dashboard</a>
+              <a href="./interface/interface2.html" onclick="loadContent('project')">Tracks</a>
+              <a href="./components/tasks/task.html" onclick="loadContent('tasks')">Tasks</a>
+              <a href="./components/calendar/calendar.html" onclick="loadContent('calendar')">Calendar</a>
             </div>
           </div>
           <div class="main-right-body">
@@ -161,7 +161,7 @@
         
     </div>
     
-    <script src="./dashboard.js"></script>
+    <script src="./components/dashboard/dashboard.js"></script>
     <!-- <script src="../sidebar/sidebar.js"></script> -->
     
 </body>

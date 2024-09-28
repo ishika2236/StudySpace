@@ -327,3 +327,69 @@ body {
       max-width: 400px;
   }
 }
+/* Sidebar Styles */
+:root {
+  --accent-orange: #fea700;
+  --accent-green: #30d350;
+  --accent-red: #f84d4d;
+  --accent-blue: #3578f6;
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --secondary-bg: #1e1e1e;
+}
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: var(--secondary-bg);
+  border-right: 1px solid var(--accent-blue);
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: transform 0.3s ease-in-out;
+  z-index: 999;
+  background-color: #1c1c1c;
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+.toggle-btn {
+  display: block;
+  width: 50px;
+  height: 50px;
+  border: none;
+  background-color: var(--accent-blue);
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: -50px;
+  text-align: center;
+  line-height: 50px;
+  color: var(--text-color);
+}
+
+.sidebar-content {
+  padding: 20px;
+  background-color: #1c1c1c;
+
+}
+
+.sidebar-content a {
+  display: block;
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #1c1c1c;
+}
+
+.main-right-body {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.main-right-body.expanded {
+  margin-left: 0;
+}
