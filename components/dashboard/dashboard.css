@@ -750,3 +750,115 @@ input {
     font-size: 0.9rem;
     color: #8e8e93;
 }
+/* Add these styles to your existing CSS file */
+
+/* Responsive styles */
+@media screen and (max-width: 1200px) {
+    .dashboard-body {
+        flex-direction: column;
+    }
+
+    .dashboard-left, .dashboard-activity {
+        width: 100%;
+    }
+
+    .dashboard-tasks {
+        flex-direction: column;
+    }
+
+    .curr-task, .task-list, .layout1 {
+        width: 100%;
+        margin: 1rem 0;
+    }
+
+    .second-mainbody {
+        flex-direction: column;
+    }
+
+    .pomodoro-container, .courses-enrolled {
+        margin: 1rem 0;
+    }
+
+    .program-tiles {
+        flex-direction: column;
+    }
+
+    .program-tile {
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        transform: none;
+    }
+
+    .sidebar.hidden {
+        display: none;
+    }
+
+    .main-right-body {
+        margin-left: 0;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-title {
+        margin-left: 0;
+        margin-bottom: 1rem;
+    }
+
+    .nav-controllers {
+        margin-left: 0;
+    }
+
+    .card {
+        margin: 1rem 0;
+    }
+
+    .activity-bars {
+        overflow-x: auto;
+    }
+
+    .activity-bar {
+        min-width: 60px;
+    }
+
+    #assignments-container, #exams-container, #courses-container {
+        grid-template-columns: 1fr;
+    }
+
+    .deploy-calendar iframe {
+        height: 400px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .theme-toggle, .nav-notifications {
+        margin: 0.5rem 0;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .projects-overview {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .projects-circle {
+        margin-bottom: 1rem;
+    }
+
+    .project-progress-bar {
+        width: 80px;
+    }
+}

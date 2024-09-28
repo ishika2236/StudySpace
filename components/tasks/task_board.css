@@ -221,3 +221,99 @@ button[type="submit"]:hover {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
 }
+@media screen and (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filters {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    select, button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .board {
+        flex-direction: column;
+    }
+
+    .column {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* Tablet-specific styles */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+}
+
+/* Mobile-specific styles */
+@media screen and (max-width: 767px) {
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .task h3 {
+        font-size: 16px;
+    }
+
+    .task p {
+        font-size: 14px;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+    }
+}
+
+/* Adjustments for very small screens */
+@media screen and (max-width: 320px) {
+    .header h1 {
+        font-size: 18px;
+    }
+
+    .task h3 {
+        font-size: 14px;
+    }
+
+    .task p {
+        font-size: 12px;
+    }
+}
+
+/* Improve form layout on smaller screens */
+@media screen and (max-width: 767px) {
+    form {
+        gap: 10px;
+    }
+
+    input[type="text"], 
+    textarea, 
+    select,
+    input[type="date"],
+    input[type="time"] {
+        font-size: 16px; /* Prevent zoom on focus in iOS */
+    }
+
+    button[type="submit"] {
+        width: 100%;
+    }
+}

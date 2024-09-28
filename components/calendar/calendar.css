@@ -300,3 +300,30 @@ body {
   background-color: var(--accent-orange);
   outline: none;
 }
+@media screen and (max-width: 768px) {
+  .calendar-header {
+      flex-direction: column;
+      align-items: stretch;
+  }
+
+  .view-selector, .header-navigation, .header-actions {
+      margin-bottom: 10px;
+  }
+
+  .view-selector button {
+      margin-bottom: 5px;
+  }
+
+  .monthly-view, .weekly-view {
+      grid-template-columns: repeat(1, 1fr);
+  }
+
+  .yearly-view {
+      grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-content {
+      width: 90%;
+      max-width: 400px;
+  }
+}

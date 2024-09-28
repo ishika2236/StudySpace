@@ -92,3 +92,40 @@ body {
 .exams-card {
     background-color: #3d0f0f;
 }
+/* Media Queries for Responsive Design */
+@media screen and (min-width: 768px) {
+    body {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 60px;
+        height: 100vh;
+        flex-direction: column;
+        padding-top: 20px;
+        position: static;
+    }
+
+    .main-content {
+        margin-bottom: 0;
+        margin-left: 60px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .projects-card {
+        grid-column: span 2;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .projects-card {
+        grid-column: span 2;
+    }
+}
